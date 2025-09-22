@@ -128,7 +128,6 @@ We will use **Bluebikes** (Boston’s bikeshare system) open trip history and re
 * **Interactive map** (Leaflet/Mapbox/Kepler.gl): circle color/size by predicted bikes (or risk) per station, with tooltips for recent trend.
 * **Time‑series panel**: actual vs. predicted availability; residual plot; calibration curve for risk model.
 * **Member vs. casual**: heatmaps by hour‑of‑week and municipality; OD flow chords between top station pairs.
-* **Dashboard**: small web app (Streamlit/Dash or a static notebook with interactive widgets) for demo.
 
 ---
 
