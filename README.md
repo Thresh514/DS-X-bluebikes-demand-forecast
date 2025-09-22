@@ -140,13 +140,14 @@ We will use **Bluebikes** (Boston’s bikeshare system) open trip history and re
 
 ---
 
-## 8) Project Timeline (8 weeks)
+## 8) Project Timeline (12 weeks)
 
 * **W1–W2**: Literature & EDA; implement data ingesters (trips, station list, GBFS logger, weather); define schemas.
 * **W3–W4**: Feature engineering; baselines + first tree model; build prototype dashboard.
 * **W5–W6**: Model tuning; add risk classifier; member vs. casual analysis; refine visuals.
 * **W7**: Backtesting, error analysis, robustness & calibration; writeup.
-* **W8**: Final polishing; presentation & README.
+* **W8–W11**: Iterations, additional backtesting, UI polish, user feedback, and integration; prepare presentation outline.
+* **W12**: Final polishing; presentation & README.
 
 ---
 
@@ -212,8 +213,6 @@ bluebikes-forecast/
 * Bluebikes System Data page; GBFS feed links and station list information.
 * GBFS specification (station\_information capacity; station\_status availability).
 * OpenWeather API docs for hourly and historical data (if used).
-
-> We will add exact URLs and data license text in the final report README once the repo is created.
 
 ---
 
@@ -283,7 +282,8 @@ We will focus modeling/evaluation on a fixed **Top-50 busiest stations** to ensu
 * **W5** (DRI: Matthew): Risk classifier; calibration evaluation; add rebalancing-indicator feature.
 * **W6** (DRI: Fenglin): Backtesting harness + ablations; member vs casual analysis visuals.
 * **W7** (DRI: Jiayong): Error analysis; polish visuals; write results.
-* **W8** (All): Final polish; README/report; demo script.
+* **W8–W11** (All): Iterations, robustness checks, UI polish, and feedback incorporation.
+* **W12** (All): Final polish; README/report; demo script.
 
 ---
 
