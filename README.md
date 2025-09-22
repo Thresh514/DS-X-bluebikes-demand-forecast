@@ -207,7 +207,7 @@ bluebikes-forecast/
 
 ---
 
-## 13) References (to cite in the report)
+## 13) References
 
 * Bluebikes System Data page; GBFS feed links and station list information.
 * GBFS specification (station\_information capacity; station\_status availability).
@@ -249,7 +249,7 @@ We will build a small but strict QA suite to avoid silent data issues:
 
 ---
 
-## 17) Evaluation Protocol (detailed)
+## 17) Evaluation Protocol
 
 * **Horizon**: 60-minute ahead point forecast; (stretch) also 15-min horizon.
 * **Granularity**: per-station, hourly buckets.
@@ -287,7 +287,7 @@ We will focus modeling/evaluation on a fixed **Top-50 busiest stations** to ensu
 
 ---
 
-## 20) Stretch Goals (nice-to-have)
+## 20) Stretch Goals
 
 * **15-min horizon** forecasts and uncertainty intervals (quantile regression).
 * **Global sequence model** (temporal conv or simple RNN) trained across stations.
