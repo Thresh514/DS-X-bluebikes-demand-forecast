@@ -1,8 +1,8 @@
 # Bluebikes Demand Forecasting — Final Project Proposal
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen<br>
-**Course:** CS 506<br>
-**Repo:** *https://github.com/MattFromBeijing/bluebikes-demand-forecast*
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen <br/>
+**Course:** CS 506 <br/>
+**Repo: **https://github.com/MattFromBeijing/bluebikes-demand-forecast**
 
 ---
 
@@ -24,6 +24,13 @@ We will use **Bluebikes** (Boston’s bikeshare system) open trip history and re
 * Citywide fleet rebalancing optimization.
 
 ---
+
+### Why this is novel / useful (vs. existing dashboards)
+
+* **Prediction, not just status**: Official maps show current availability; we add **short-horizon forecasts** and **risk of stockout/dockout**, enabling proactive decisions (e.g., walk to a nearby station before it empties).
+* **Actionable risk framing**: Binary risk alerts are easier for non-technical users than raw counts; we will provide **calibrated probabilities** with reliability plots.
+* **User-type insights**: A focused **member vs. casual** analysis (hour-of-week, OD pairs, durations) is rarely available in existing public dashboards.
+* **Lightweight, reproducible stack**: All data and code paths are scripted and documented; results are reproducible on student laptops.
 
 ## 2) Goals & Success Criteria
 
@@ -208,3 +215,139 @@ bluebikes-forecast/
 * OpenWeather API docs for hourly and historical data (if used).
 
 > We will add exact URLs and data license text in the final report README once the repo is created.
+
+---
+
+## 14) Similar Products / Related Work (brief)
+
+* Public bikeshare dashboards typically report **current** status and historical utilization summaries.
+* Our proposal adds **forward-looking forecasts** + **risk classification** and a focused **member vs. casual** behavioral study, filling a practical gap for short-window planning.
+
+---
+
+## 15) Data Quality Checks & QA
+
+We will build a small but strict QA suite to avoid silent data issues:
+
+* **Schema checks** (Great Expectations or custom): required columns present; dtypes (timestamps, IDs, enums) validated.
+* **Time sanity**: `start_time <= end_time`; non-negative durations; timezone normalized to **UTC** with explicit Boston **EDT/EST** handling.
+* **Station integrity**: unknown station IDs flagged; renamed/relocated stations resolved with a mapping table.
+* **Duplicate trips & outliers**: drop exact dupes; winsorize top 0.5% durations; flag improbable speeds.
+* **GBFS freshness**: `now - last_reported` within tolerance (e.g., < 10 min) or mark snapshot as stale.
+* **Capacity consistency**: `num_bikes_available + num_docks_available <= capacity` (allow small tolerance for reporting lag).
+* **Unit tests** for parsers, feature builders, and splitters; **smoke tests** for end-to-end pipelines.
+
+---
+
+## 16) Reproducibility & Engineering Standards
+
+* **Env**: `requirements.txt` (or `environment.yml`), pinned versions; `python -m venv` instructions.
+* **Randomness**: global seeds; document any non-determinism (e.g., multithreaded training).
+* **Makefile** / simple CLI: `make ingest`, `make features`, `make train`, `make eval`, `make viz`.
+* **Data versioning**: folder conventions with checksums; optional DVC if time permits.
+* **Pre-commit**: black/ruff/isort; type hints where helpful.
+* **Security/ethics**: no secrets in repo; API keys via `.env`.
+
+---
+
+## 17) Evaluation Protocol (detailed)
+
+* **Horizon**: 60-minute ahead point forecast; (stretch) also 15-min horizon.
+* **Granularity**: per-station, hourly buckets.
+* **Splits**: rolling-origin backtests over contiguous monthly windows; final **chronological holdout** at the end of the GBFS logging period.
+* **Metrics**:
+
+  * Regression: MAE, RMSE, SMAPE; report **macro (per-station) averages** and **station histograms**.
+  * Classification: ROC-AUC, PR-AUC, **Brier score**; **calibration curves** and **decision curves**.
+* **Baselines**: persistence; hour-of-week mean; (optional) simple ARIMA per-station.
+* **Ablations**: −weather; −lags; capacity cap off; exclude rebalancing-indicator.
+* **Error analysis**: by hour-of-day, weekday vs weekend, weather bins, station capacity quintiles.
+
+---
+
+## 18) Station Selection Criteria
+
+We will focus modeling/evaluation on a fixed **Top-50 busiest stations** to ensure stable signals:
+
+* Rank by monthly total trips (starts + ends) during the training period.
+* Ensure geographic diversity (e.g., downtown, campus areas, residential neighborhoods).
+* Keep the set fixed for test to avoid selection leakage.
+
+---
+
+## 19) Milestones with DRIs (owners)
+
+* **W1** (DRI: Jiayong): Trip CSV ingestion + station list; timezone normalization; initial EDA notebook.
+* **W2** (DRI: Fenglin): GBFS logger running (5-min cadence), weather fetcher; data-quality checks in place.
+* **W3** (DRI: Matthew): Feature builder (lags/rolling/hour-of-week/capacity); baseline models (persistence, HoW mean).
+* **W4** (DRI: Mingyu): First tree model (XGBoost/LightGBM); preliminary dashboard (map + time-series panel).
+* **W5** (DRI: Matthew): Risk classifier; calibration evaluation; add rebalancing-indicator feature.
+* **W6** (DRI: Fenglin): Backtesting harness + ablations; member vs casual analysis visuals.
+* **W7** (DRI: Jiayong): Error analysis; polish visuals; write results.
+* **W8** (All): Final polish; README/report; demo script.
+
+---
+
+## 20) Stretch Goals (nice-to-have)
+
+* **15-min horizon** forecasts and uncertainty intervals (quantile regression).
+* **Global sequence model** (temporal conv or simple RNN) trained across stations.
+* **Counterfactual what-if** sliders in the dashboard (e.g., weather toggles).
+* **Minimal rebalancing signal** from status jumps (unsupervised change-point detection).
+
+---
+
+## 21) Dashboard User Stories (for demo)
+
+* **Commuter**: “At 8:15 AM, will **BU Central** have bikes at 8:45? If high stockout risk, suggest nearest alternative.”
+* **Casual rider**: “On a rainy Saturday, which stations near the Boston Common are likely to have docks free at 4 PM?”
+* **Analyst**: “Show top-10 stations by forecast error last week and their calibration curves.”
+
+---
+
+## 22) Appendices
+
+### A. Minimal Data Dictionary (initial)
+
+* **Trips CSV**: `ride_id`, `started_at` (UTC), `ended_at` (UTC), `start_station_id`, `end_station_id`, `member_casual`, `duration_min`.
+* **Station information**: `station_id`, `name`, `lat`, `lon`, `capacity`, `region`.
+* **Station status snapshot**: `timestamp_utc`, `station_id`, `num_bikes_available`, `num_docks_available`, `is_renting`, `is_returning`, `last_reported_utc`.
+* **Weather hourly**: `timestamp_utc`, `temp_c`, `precip_mm`, `wind_mps`, `condition_code`.
+
+### B. GBFS Logger (pseudocode)
+
+```python
+# run every 5 minutes via cron/systemd timer
+import requests, time, json, datetime as dt
+from pathlib import Path
+
+URL = "<station_status.json>"  # to be set in .env
+OUT = Path("data/gbfs_logs/")
+OUT.mkdir(parents=True, exist_ok=True)
+
+def fetch_status():
+    r = requests.get(URL, timeout=10)
+    r.raise_for_status()
+    payload = r.json()
+    ts = dt.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    (OUT / f"status_{ts}.json").write_text(json.dumps(payload))
+
+if __name__ == "__main__":
+    fetch_status()
+```
+
+### C. Train/Val/Test Split (example)
+
+* **Train**: first 70% of timeline (by timestamp).
+* **Val**: next 15% (for model selection & early stopping).
+* **Test**: final 15% (untouched until last week).
+* **Rolling windows**: monthly backtests across the GBFS logging period.
+
+### D. Risk Thresholding
+
+* Choose threshold by maximizing **F1** or using **Youden’s J** on validation; verify calibration; present risk bands (Low/Medium/High) in the UI.
+
+### E. Repo Checklists
+
+* `README` quickstart; `make` targets; `.env.example`; data paths; figures saved under `reports/`.
+* CI (optional): run unit tests and lint on PRs.
