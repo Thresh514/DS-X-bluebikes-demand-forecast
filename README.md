@@ -346,8 +346,3 @@ if __name__ == "__main__":
 ### D. Risk Thresholding
 
 * Choose threshold by maximizing **F1** or using **Youden’s J** on validation; verify calibration; present risk bands (Low/Medium/High) in the UI.
-
-### E. Repo Checklists
-
-* `README` quickstart; `make` targets; `.env.example`; data paths; figures saved under `reports/`.
-* CI (optional): run unit tests and lint on PRs.
