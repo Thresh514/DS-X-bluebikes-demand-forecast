@@ -72,7 +72,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - **Time charts:** show actual vs predicted bikes from testing data set
 
 ## 6) Test Plan
-- **Train/test split by date:** Train on data collected between January 2022 - December 2024 (36 months total). Test on data collected beginning in January 2025. 
+- **Train/test split by date:** Train on data collected between January 2022 - December 2024. Test on data collected beginning in January 2025. Approximately 75% training, 25% test.
 - **Metrics:** average error (MAE) and RMSE for numbers; for warnings, track how often we are right and how often we miss a problem.  
 - **Compare with baselines:** make sure we improve on “last value” and “hour‑of‑week average.”  
 - **Small experiments:** remove weather or recent‑history features to see how much they help.
