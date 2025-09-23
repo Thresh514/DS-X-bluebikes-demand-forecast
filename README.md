@@ -30,8 +30,8 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 
 ## 2) Goals & Success Criteria
 ### Goals
-- **Prediction:** Predict, for any station *s* at future time *t*, the number of available bikes and docks.
-- **Behavior:** Predict, for any station *s* at future time *t*, the number of bikes rented by Bluebike members vs casual riders.
+- **Prediction:** Predict, for any station *s* at future time (hourly) *t*, the number of available bikes and docks.
+- **Behavior:** Predict, for any station *s* at future time (hourly) *t*, the number of bikes rented by Bluebike members vs casual riders.
 
 ### How we measure success:
 - Keep **average error ≈ 3 bikes** and **typical squared error ≈ 5 bikes RMSE** on the top ~50 stations.
@@ -52,7 +52,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 ### 3.2 Weather (optional)
 - **What:** hourly temperature, rain/snow, wind, general condition.
 - **Why:** Weather strongly affects bike use.
-- **Where:** [National Weather Service (monthly (data)](https://www.weather.gov/wrh/climate?wfo=box) or another similar service
+- **Where:** [National Weather Service (monthly data)](https://www.weather.gov/wrh/climate?wfo=box) or another similar service
 
 ## 4) Modelling the Data
 ### Main models
@@ -75,8 +75,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - **Train/test split by date:** Train on data collected between January 2022 - December 2024 (36 months total). Test on data collected beginning in January 2025. 
 - **Metrics:** average error (MAE) and RMSE for numbers; for warnings, track how often we are right and how often we miss a problem.  
 - **Compare with baselines:** make sure we improve on “last value” and “hour‑of‑week average.”  
-- **Small experiments:** remove weather or recent‑history features to see how much they help.  
-- **No data leakage:** features only use information from **now or earlier**.
+- **Small experiments:** remove weather or recent‑history features to see how much they help.
 
 ## 7) Project Timeline (8 weeks)
 * **W1**: Implement data ingesters (trips, station list, GBFS logger, weather); define schemas.
@@ -84,7 +83,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 * **W3–W4**: Model tuning; add risk classifier; member vs. casual analysis; refine visuals.
 * **W5**: Backtesting, error analysis, robustness & calibration.
 * **W6–W7**: Iterations, additional backtesting, prepare presentation.
-* **W12**: Final polishing for presentation & README.
+* **W8**: Final polishing for presentation & README.
 
 ## 8) Deliverables
 - **Cleaned datasets** (documented tables for features/labels).  
@@ -99,9 +98,6 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 ## 10) Stretch Goals (nice-to-have)
 - **Application:** Fullstack applicaiton utilizing our trained model.
 - **15-min horizon** forecasts and uncertainty intervals (quantile regression).
-- **Global sequence model** (temporal conv or simple RNN) trained across stations.
-- **Counterfactual what-if** sliders in the dashboard (e.g., weather toggles).
-- **Minimal rebalancing signal** from status jumps (unsupervised change-point detection).
 
 ## 11) Repository Layout (proposed)
 bluebikes-forecast/
