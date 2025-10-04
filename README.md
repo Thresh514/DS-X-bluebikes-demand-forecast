@@ -55,17 +55,36 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - **Where:** [National Weather Service (monthly data)](https://www.weather.gov/wrh/climate?wfo=box) or another similar service
 
 ## 4) Modelling the Data
-### Main models
-- **Simple regression** and **tree‑based models** (e.g., random forest or gradient boosting). We’ll keep them small and use early‑stopping to avoid overfitting.
 
-### Possible features
-- Hour‑of‑week; weekend/holiday.  
-- Station capacity and simple popularity rank.
-- Weather (if included).
+### Framing
 
-### Model checks
-- Use time‑ordered validation; don’t use any future information when training.  
-- Keep models readable; add short notes explaining which features mattered most.
+We treat this as a **short-term time-series forecasting** problem framed as regression.
+Each sample represents a station’s bike/dock availability at a given time, and features include both **recent history** (e.g., last 1–2 hours) and **contextual factors** (hour of day, weather, etc.).
+
+### Baseline Model
+
+* **Persistence model:** use the most recent observation (or average of the last hour) as the prediction.
+  This provides a simple benchmark to measure improvement.
+
+### Main Models
+
+* **Linear regression:** interpretable baseline to capture simple trends.
+* **Tree-based models:** Random Forest or Gradient Boosting (e.g., XGBoost/LightGBM) to capture nonlinear interactions.
+  All models will use **time-ordered train/test splits** and **early stopping** to prevent overfitting.
+
+### Features
+
+* Recent lagged values (e.g., available bikes in past 15, 30, 60 min)
+* Hour-of-week, weekend/holiday indicators
+* Station capacity and popularity rank
+* Weather features (temperature, precipitation, wind, condition)
+
+### Model Evaluation & Checks
+
+* Compare model performance against the persistence baseline using MAE and RMSE.
+* Ensure **no future data leakage** by using chronological splits.
+* Analyze **feature importance** to explain which factors drive predictions.
+  
 
 ## 5) Visualization Plan
 - **Interactive heat map:** display prediction of bike availability of all bluebike stops on a map through different color/size based on each location's predicted availability
