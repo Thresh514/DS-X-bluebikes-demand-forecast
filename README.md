@@ -21,8 +21,13 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - **Behavior:** Predict, for any station *s* at future time *t*, the number of bikes rented by Bluebike members vs casual riders.
 
 ### What we’re **not** doing
-- Long‑range forecasts beyond a day.
-- Full city rebalancing/operations optimization.
+- **Long-range forecasts beyond a day**: We are limiting our scope to **short-term, near-real-time predictions (next 60 min, optionally 15 min)**.  
+  Long-term forecasting (days/weeks ahead) would require additional external factors like seasonality, event schedules, and deeper weather trends, which is out of scope for this 8-week project.  
+
+- **Full city rebalancing/operations optimization**: We are **not designing algorithms to suggest truck routes or move bikes** around the city to balance inventory.  
+  That would involve logistics optimization and simulation, which is beyond our current scope. Instead, we only provide **station-level demand predictions** that could later inform such systems.
+
+
 
 ### Why it matters
 - Riders can avoid empty or full stations before they get there.
