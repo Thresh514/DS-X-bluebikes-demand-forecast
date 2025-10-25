@@ -88,7 +88,7 @@ export default function Home() {
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
             天气数据测试
           </h3>
-          
+
           <button
             onClick={fetchWeather}
             disabled={loading}
@@ -110,25 +110,33 @@ export default function Home() {
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-gray-600 p-3 rounded">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">温度</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    温度
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {weather.temperature} {weather.unit.temperature}
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-600 p-3 rounded">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">风速</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    风速
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {weather.windSpeed} {weather.unit.windSpeed}
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-600 p-3 rounded">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">降水量</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    降水量
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {weather.precipitation} {weather.unit.precipitation}
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-600 p-3 rounded">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">时间（美东）</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    时间（美东）
+                  </p>
                   <p className="text-lg font-semibold text-gray-900 dark:text-white">
                     {weather.time}
                   </p>
