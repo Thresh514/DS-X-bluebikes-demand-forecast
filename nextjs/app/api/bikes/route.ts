@@ -5,14 +5,12 @@ export async function GET() {
   try {
     // 1. 并行拉取两个 JSON API
     const [infoRes, statusRes] = await Promise.all([
-      fetch(
-        "https://gbfs.bluebikes.com/gbfs/en/station_information.json",
-        { cache: "no-store" }
-      ),
-      fetch(
-        "https://gbfs.bluebikes.com/gbfs/en/station_status.json",
-        { cache: "no-store" }
-      ),
+      fetch("https://gbfs.bluebikes.com/gbfs/en/station_information.json", {
+        cache: "no-store",
+      }),
+      fetch("https://gbfs.bluebikes.com/gbfs/en/station_status.json", {
+        cache: "no-store",
+      }),
     ]);
 
     if (!infoRes.ok || !statusRes.ok) {
@@ -46,8 +44,7 @@ export async function GET() {
     console.error("Error fetching Bluebikes data:", error);
     return NextResponse.json(
       { error: "Failed to fetch Bluebikes data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

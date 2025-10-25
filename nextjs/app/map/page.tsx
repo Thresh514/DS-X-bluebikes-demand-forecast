@@ -17,14 +17,17 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-const BikeMap = dynamic(() => import("@/components/bike-map").then(mod => mod.BikeMap), {
-  ssr: false,
-  loading: () => (
-    <div className="h-full w-full bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-      <LoadingSpinner size="md" />
-    </div>
-  ),
-});
+const BikeMap = dynamic(
+  () => import("@/components/bike-map").then((mod) => mod.BikeMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
+        <LoadingSpinner size="md" />
+      </div>
+    ),
+  },
+);
 
 export default function MapPage() {
   const [stations, setStations] = useState<BikeStation[]>([]);
@@ -33,7 +36,7 @@ export default function MapPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStation, setSelectedStation] = useState<BikeStation | null>(
-    null
+    null,
   );
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
@@ -73,7 +76,7 @@ export default function MapPage() {
       setFilteredStations(stations);
     } else {
       const filtered = stations.filter((station) =>
-        station.name.toLowerCase().includes(searchQuery.toLowerCase())
+        station.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredStations(filtered);
     }
@@ -88,7 +91,7 @@ export default function MapPage() {
         ? (
             stations.reduce(
               (sum, s) => sum + (s.num_bikes_available / s.capacity) * 100,
-              0
+              0,
             ) / stations.length
           ).toFixed(1)
         : 0,
@@ -99,7 +102,9 @@ export default function MapPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center space-y-4">
           <LoadingSpinner size="lg" />
-          <p className="text-lg text-gray-600">Loading Bluebikes real-time data...</p>
+          <p className="text-lg text-gray-600">
+            Loading Bluebikes real-time data...
+          </p>
         </div>
       </div>
     );
@@ -115,7 +120,8 @@ export default function MapPage() {
                 Bluebikes Real-time Map
               </h1>
               <p className="text-sm text-gray-600">
-                {lastUpdate && `Last updated: ${lastUpdate.toLocaleTimeString("en-US")}`}
+                {lastUpdate &&
+                  `Last updated: ${lastUpdate.toLocaleTimeString("en-US")}`}
               </p>
             </div>
             <Button
@@ -246,19 +252,27 @@ export default function MapPage() {
               <CardTitle className="text-sm">Map Legend</CardTitle>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-green-500" />
-                <span className="text-sm text-gray-700">Many bikes (&gt;7)</span>
+                <span className="text-sm text-gray-700">
+                  Many bikes (&gt;7)
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-blue-500" />
-                <span className="text-sm text-gray-700">Medium (4-7 bikes)</span>
+                <span className="text-sm text-gray-700">
+                  Medium (4-7 bikes)
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-orange-500" />
-                <span className="text-sm text-gray-700">Few bikes (1-3 bikes)</span>
+                <span className="text-sm text-gray-700">
+                  Few bikes (1-3 bikes)
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-red-500" />
-                <span className="text-sm text-gray-700">No bikes (0 bikes)</span>
+                <span className="text-sm text-gray-700">
+                  No bikes (0 bikes)
+                </span>
               </div>
             </div>
           </CardContent>
