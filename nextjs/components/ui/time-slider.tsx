@@ -80,7 +80,7 @@ export function TimeSlider({
           appearance: none;
           width: 20px;
           height: 20px;
-          background: #3B82F6;
+          background: #3b82f6;
           border: 3px solid white;
           border-radius: 50%;
           cursor: pointer;
@@ -95,7 +95,7 @@ export function TimeSlider({
         input[type="range"]::-moz-range-thumb {
           width: 20px;
           height: 20px;
-          background: #3B82F6;
+          background: #3b82f6;
           border: 3px solid white;
           border-radius: 50%;
           cursor: pointer;
@@ -110,4 +110,3 @@ export function TimeSlider({
     </div>
   );
 }
-

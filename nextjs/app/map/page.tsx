@@ -56,7 +56,7 @@ export default function MapPage() {
       setStations(data);
       setFilteredStations(data);
       setLastUpdate(new Date());
-      
+
       // 如果有预测时间，立即获取预测数据
       if (predictionMinutes > 0) {
         await fetchPredictions(data, predictionMinutes);
@@ -125,19 +125,19 @@ export default function MapPage() {
       const updatedStations = stationsData.map((station, index) => {
         const arrivals = predictData.predictions[index]?.arrivals || 0;
         const departures = predictData.predictions[index]?.departures || 0;
-        
+
         // 计算预测后的单车数量：当前数量 + 进站 - 出站
         const predictedBikes = Math.max(
           0,
           Math.min(
             station.capacity,
-            station.num_bikes_available + arrivals - departures
-          )
+            station.num_bikes_available + arrivals - departures,
+          ),
         );
-        
+
         // 计算预测后的停车桩数量
         const predictedDocks = station.capacity - predictedBikes;
-        
+
         return {
           ...station,
           predicted_arrivals: arrivals,
@@ -239,7 +239,10 @@ export default function MapPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
-                  预测时间: {predictionMinutes === 0 ? "实时" : `${predictionMinutes} 分钟后`}
+                  预测时间:{" "}
+                  {predictionMinutes === 0
+                    ? "实时"
+                    : `${predictionMinutes} 分钟后`}
                 </span>
                 {predicting && (
                   <span className="text-xs text-blue-600 flex items-center gap-1">
@@ -273,25 +276,37 @@ export default function MapPage() {
 
           <div className="lg:col-span-1 space-y-4">
             <Card className="flex flex-col">
-                <CardHeader>
-                    <CardTitle>
-                        <span>Statistics</span>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col">
-                    <div className="text-lg p-2 font-bold space-x-4">
-                        <span className="text-3xl text-green-600">{stats.totalStations}</span> stations
-                    </div>
-                    <div className="text-lg p-2 font-bold space-x-4">
-                        <span className="text-3xl text-blue-600">{stats.totalBikes}</span> bikes available
-                    </div>
-                    <div className="text-lg p-2 font-bold space-x-4">
-                        <span className="text-3xl text-yellow-500">{stats.totalDocks}</span> docks available
-                    </div>
-                    <div className="text-lg p-2 font-bold space-x-4">
-                        <span className="text-3xl text-red-500">{stats.averageUtilization}%</span> utilization rate
-                    </div>
-                </CardContent>
+              <CardHeader>
+                <CardTitle>
+                  <span>Statistics</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col">
+                <div className="text-lg p-2 font-bold space-x-4">
+                  <span className="text-3xl text-green-600">
+                    {stats.totalStations}
+                  </span>{" "}
+                  stations
+                </div>
+                <div className="text-lg p-2 font-bold space-x-4">
+                  <span className="text-3xl text-blue-600">
+                    {stats.totalBikes}
+                  </span>{" "}
+                  bikes available
+                </div>
+                <div className="text-lg p-2 font-bold space-x-4">
+                  <span className="text-3xl text-yellow-500">
+                    {stats.totalDocks}
+                  </span>{" "}
+                  docks available
+                </div>
+                <div className="text-lg p-2 font-bold space-x-4">
+                  <span className="text-3xl text-red-500">
+                    {stats.averageUtilization}%
+                  </span>{" "}
+                  utilization rate
+                </div>
+              </CardContent>
             </Card>
 
             <Card className="h-[670px] flex flex-col">

@@ -1,7 +1,14 @@
 import { BikeStation } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bike, ParkingCircle, MapPin, Clock, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  Bike,
+  ParkingCircle,
+  MapPin,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 
 interface BikeStationCardProps {
   station: BikeStation;
@@ -10,14 +17,16 @@ interface BikeStationCardProps {
 
 export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
   // 如果有预测数据，使用预测值；否则使用当前值
-  const bikeAvailability = station.predicted_bikes_available !== undefined 
-    ? station.predicted_bikes_available 
-    : station.num_bikes_available;
-  const dockAvailability = station.predicted_docks_available !== undefined 
-    ? station.predicted_docks_available 
-    : station.num_docks_available;
+  const bikeAvailability =
+    station.predicted_bikes_available !== undefined
+      ? station.predicted_bikes_available
+      : station.num_bikes_available;
+  const dockAvailability =
+    station.predicted_docks_available !== undefined
+      ? station.predicted_docks_available
+      : station.num_docks_available;
   const utilizationRate = (bikeAvailability / station.capacity) * 100;
-  
+
   // 是否在预测模式
   const isPredicting = station.predicted_bikes_available !== undefined;
 
@@ -112,7 +121,8 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
           <span>Updated at {formatLastReported(station.last_reported)}</span>
         </div>
 
-        {(station.predicted_arrivals !== undefined || station.predicted_departures !== undefined) && (
+        {(station.predicted_arrivals !== undefined ||
+          station.predicted_departures !== undefined) && (
           <div className="space-y-2 pt-2 border-t border-blue-200 bg-blue-50 -mx-4 -mb-4 px-4 py-3 rounded-b-lg">
             <div className="text-sm font-semibold text-blue-800 mb-2">
               Predicted Data
