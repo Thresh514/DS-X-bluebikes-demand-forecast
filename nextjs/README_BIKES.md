@@ -7,6 +7,7 @@
 ## ✨ 功能特性
 
 ### 🗺️ 实时地图
+
 - 使用 React Leaflet 展示所有 Bluebikes 站点
 - 根据可用自行车数量显示不同颜色的标记：
   - 🟢 **绿色**：车多（>7 辆）
@@ -16,20 +17,24 @@
 - 点击标记查看详细信息
 
 ### 📊 实时统计
+
 - 站点总数
 - 可用自行车总数
 - 可用停车位总数
 - 平均使用率
 
 ### 🔍 搜索与过滤
+
 - 实时搜索站点名称
 - 动态过滤显示结果
 
 ### ⏱️ 自动刷新
+
 - 每 60 秒自动刷新数据
 - 手动刷新按钮
 
 ### 🎨 美观的 UI
+
 - 使用 shadcn ui 组件库
 - 响应式设计，支持移动端
 - 现代化的渐变背景和卡片设计
@@ -116,20 +121,24 @@ npm run dev
 ```
 
 **数据源：**
+
 - Station Information: `https://gbfs.bluebikes.com/gbfs/en/station_information.json`
 - Station Status: `https://gbfs.bluebikes.com/gbfs/en/station_status.json`
 
 ## 🎨 组件说明
 
 ### BikeMap 组件
+
 位置：`components/bike-map.tsx`
 
 **功能：**
+
 - 渲染交互式地图
 - 显示所有站点标记
 - 点击标记显示弹窗信息
 
 **Props：**
+
 ```typescript
 interface BikeMapProps {
   stations: BikeStation[];
@@ -138,15 +147,18 @@ interface BikeMapProps {
 ```
 
 ### BikeStationCard 组件
+
 位置：`components/bike-station-card.tsx`
 
 **功能：**
+
 - 显示单个站点的详细信息
 - 可用自行车/停车位状态
 - 使用率进度条
 - 最后更新时间
 
 **Props：**
+
 ```typescript
 interface BikeStationCardProps {
   station: BikeStation;
@@ -159,6 +171,7 @@ interface BikeStationCardProps {
 ### 1. 数据获取与合并
 
 API Route (`app/api/bikes/route.ts`) 负责：
+
 1. 并行请求两个 Bluebikes API
 2. 按 `station_id` 合并数据
 3. 返回统一格式的 JSON
@@ -187,7 +200,7 @@ useEffect(() => {
     setFilteredStations(stations);
   } else {
     const filtered = stations.filter((station) =>
-      station.name.toLowerCase().includes(searchQuery.toLowerCase())
+      station.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredStations(filtered);
   }
@@ -199,6 +212,7 @@ useEffect(() => {
 ### 颜色主题
 
 在 `globals.css` 中定义了完整的颜色系统：
+
 - Primary: 蓝色系（#2563eb）
 - Success: 绿色系（#10b981）
 - Warning: 橙色系（#f59e0b）
@@ -207,6 +221,7 @@ useEffect(() => {
 ### 响应式设计
 
 使用 Tailwind CSS 的响应式工具类：
+
 ```tsx
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
   {/* 移动端：1 列，大屏幕：3 列 */}
@@ -216,7 +231,9 @@ useEffect(() => {
 ## 🔧 配置文件
 
 ### tsconfig.json
+
 已配置路径别名：
+
 ```json
 {
   "paths": {
@@ -226,6 +243,7 @@ useEffect(() => {
 ```
 
 ### tailwind.config.ts
+
 使用 shadcn ui 的颜色系统和 HSL 变量。
 
 ## 📱 使用场景
@@ -278,4 +296,3 @@ DS-X Bluebikes Demand Forecast Team
 ---
 
 **Enjoy your ride! 🚴‍♂️**
-

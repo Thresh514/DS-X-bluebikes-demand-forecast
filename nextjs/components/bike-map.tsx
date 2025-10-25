@@ -44,12 +44,12 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
 
   return (
     <MapContainer
-        key="bluebikes-map"
-        center={[42.3601, -71.0589]}
-        zoom={13}
-        style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
-        className="z-0"
-        scrollWheelZoom={true}
+      key="bluebikes-map"
+      center={[42.3601, -71.0589]}
+      zoom={13}
+      style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
+      className="z-0"
+      scrollWheelZoom={true}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -81,7 +81,7 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
                   {station.name}
                 </h3>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-sm">
@@ -93,8 +93,8 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
                       station.num_bikes_available === 0
                         ? "danger"
                         : station.num_bikes_available <= 3
-                        ? "warning"
-                        : "success"
+                          ? "warning"
+                          : "success"
                     }
                   >
                     {station.num_bikes_available} bikes
@@ -111,8 +111,8 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
                       station.num_docks_available === 0
                         ? "danger"
                         : station.num_docks_available <= 3
-                        ? "warning"
-                        : "success"
+                          ? "warning"
+                          : "success"
                     }
                   >
                     {station.num_docks_available} docks

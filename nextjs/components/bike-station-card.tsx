@@ -29,7 +29,7 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
     const date = new Date(timestamp * 1000);
     const now = new Date();
     const diffMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
-    
+
     if (diffMinutes < 1) return "Just now";
     if (diffMinutes < 60) return `${diffMinutes} minutes ago`;
     const diffHours = Math.floor(diffMinutes / 60);
@@ -97,4 +97,3 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
     </Card>
   );
 }
-

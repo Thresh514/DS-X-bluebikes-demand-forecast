@@ -23,4 +23,3 @@ export interface StationStatus {
   num_docks_available: number;
   last_reported: number;
 }
-
