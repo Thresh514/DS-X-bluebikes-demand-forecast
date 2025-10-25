@@ -7,6 +7,10 @@ export interface BikeStation {
   num_bikes_available: number;
   num_docks_available: number;
   last_reported: number;
+  predicted_arrivals?: number;
+  predicted_departures?: number;
+  predicted_bikes_available?: number;
+  predicted_docks_available?: number;
 }
 
 export interface StationInfo {
@@ -22,4 +26,16 @@ export interface StationStatus {
   num_bikes_available: number;
   num_docks_available: number;
   last_reported: number;
+}
+
+export interface WeatherData {
+  temperature: number;
+  windSpeed: number;
+  precipitation: number;
+  unit: {
+    temperature: string;
+    windSpeed: string;
+    precipitation: string;
+  };
+  time: string;
 }

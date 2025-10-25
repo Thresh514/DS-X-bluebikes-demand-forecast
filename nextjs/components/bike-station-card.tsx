@@ -1,7 +1,7 @@
 import { BikeStation } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bike, ParkingCircle, MapPin, Clock } from "lucide-react";
+import { Bike, ParkingCircle, MapPin, Clock, TrendingUp, TrendingDown } from "lucide-react";
 
 interface BikeStationCardProps {
   station: BikeStation;
@@ -9,9 +9,17 @@ interface BikeStationCardProps {
 }
 
 export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
-  const bikeAvailability = station.num_bikes_available;
-  const dockAvailability = station.num_docks_available;
+  // 如果有预测数据，使用预测值；否则使用当前值
+  const bikeAvailability = station.predicted_bikes_available !== undefined 
+    ? station.predicted_bikes_available 
+    : station.num_bikes_available;
+  const dockAvailability = station.predicted_docks_available !== undefined 
+    ? station.predicted_docks_available 
+    : station.num_docks_available;
   const utilizationRate = (bikeAvailability / station.capacity) * 100;
+  
+  // 是否在预测模式
+  const isPredicting = station.predicted_bikes_available !== undefined;
 
   const getBikeStatusVariant = () => {
     if (bikeAvailability === 0) return "danger";
@@ -58,6 +66,11 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
               <span>Bikes Available</span>
             </div>
             <Badge variant={getBikeStatusVariant()} className="justify-center">
+              {isPredicting && (
+                <span className="text-xs opacity-60 line-through mr-1">
+                  {station.num_bikes_available}
+                </span>
+              )}
               {bikeAvailability} bikes
             </Badge>
           </div>
@@ -68,6 +81,11 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
               <span>Docks Available</span>
             </div>
             <Badge variant={getDockStatusVariant()} className="justify-center">
+              {isPredicting && (
+                <span className="text-xs opacity-60 line-through mr-1">
+                  {station.num_docks_available}
+                </span>
+              )}
               {dockAvailability} docks
             </Badge>
           </div>
@@ -93,6 +111,30 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
           <Clock className="h-3 w-3" />
           <span>Updated at {formatLastReported(station.last_reported)}</span>
         </div>
+
+        {(station.predicted_arrivals !== undefined || station.predicted_departures !== undefined) && (
+          <div className="space-y-2 pt-2 border-t border-blue-200 bg-blue-50 -mx-4 -mb-4 px-4 py-3 rounded-b-lg">
+            <div className="text-sm font-semibold text-blue-800 mb-2">
+              Predicted Data
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2 bg-white rounded-md p-2">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                <span className="text-lg font-bold text-green-700">
+                  +{station.predicted_arrivals || 0}
+                </span>
+                <span className="text-xs text-gray-600">Arrivals</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white rounded-md p-2">
+                <TrendingDown className="h-4 w-4 text-orange-600" />
+                <span className="text-lg font-bold text-orange-700">
+                  -{station.predicted_departures || 0}
+                </span>
+                <span className="text-xs text-gray-600">Departures</span>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
