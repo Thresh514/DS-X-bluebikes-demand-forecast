@@ -1,24 +1,24 @@
-# Bluebikes Demand Forecasting — Project Proposal
+# DS + X Hackathon - Bluebikes Demand Forecasting
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen  
-**Course:** CS 506
+**Team Name:** Team MLKJ  
+**Team:** Matthew Yan · Jiayong Tu · Lingjie Su · Kunyu Zheng  
+**Demo Link:** https://mlkj.vercel.app/  
 
 ---
 
 ### Overall Summary
-- **What we’re building:** Our project aims to predict the bike/dock availability for any given station in the **next 60 minutes.** We’ll also compare how **members** and **casual riders** use the system.
-- **Why it helps:** Riders can pick a better station before they arrive; organizers get a quick view of hot spots and risk.
-- **Data we’ll use:** Trip history CSVs from Bluebikes, a station list with capacity, the **live station status feed** (we’ll save a copy every 5 minutes), and optional weather.
-- **How we’ll judge success:** We plan to train our model on earlier data and test it on more recent data. We plan to evaluate our success by seeing how close our model's prediction of a bike stand's availability at a specific time is to the bike stand's actual availability at the specified time.
-- **Timeline:** 8-9 weeks (2 months)
-
+* **What we’re building:** A real-time web app that predicts **bike and dock availability at each Bluebikes station in the next 60 minutes**, powered by live data and a lightweight ML model.
+* **Why it helps:** Riders can plan trips more efficiently, and organizers can instantly identify high-demand or low-availability stations.
+* **Data we’ll use:** Bluebikes’ **live station status API**, **station capacity data**, and **recent trip history** (sampled for quick training).
+* **How we’ll judge success:** Our system will be successful if the map updates in real time, the model predictions are reasonably close to reality, and the interface clearly shows where shortages are likely to occur.
+* **Timeline:** **30 hours total** — focusing on building an end-to-end working demo: live data ingestion, on-the-fly prediction, and interactive visualization.
 
 ## 1) Project Description
-We will use Bluebikes’ public data to study demand **by station and time** and to **predict near‑term availability** (bikes and docks). We will also compare **members vs casual riders** to see when and where they ride, and how long their trips are. The scope fits a 8‑week student project with a simple baseline, steady improvements, and a small interactive demo.
+We will build a real-time **bike availability prediction and visualization system** for Bluebikes stations in Boston. Using Bluebikes’ **public live API** together with recent trip history, our project will **forecast the number of available bikes and docks at each station in the next hour**. The web app will display a **live interactive map** that shows current and predicted availability, allowing users and city planners to spot potential shortages in advance.
+</br>Since this is a 30-hour hackathon project, our focus is on creating a **fully functional demo** — integrating real-time data, lightweight machine-learning predictions, and clear visual insights — rather than long-term modeling or large-scale optimization.
 
 ### Goals
 - **Prediction:** Predict, for any station *s* at future time *t*, the number of available bikes and docks.
-- **Behavior:** Predict, for any station *s* at future time *t*, the number of bikes rented by Bluebike members vs casual riders.
 
 ### What we’re **not** doing
 - **Long-range forecasts beyond a day**: We are limiting our scope to **short-term, near-real-time predictions (next 60 min, optionally 15 min)**.  
@@ -27,8 +27,6 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - **Full city rebalancing/operations optimization**: We are **not designing algorithms to suggest truck routes or move bikes** around the city to balance inventory.  
   That would involve logistics optimization and simulation, which is beyond our current scope. Instead, we only provide **station-level demand predictions** that could later inform such systems.
 
-
-
 ### Why it matters
 - Riders can avoid empty or full stations before they get there.
 - Planners can spot problem stations and times and act earlier.
@@ -36,7 +34,6 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 ## 2) Goals & Success Criteria
 ### Goals
 - **Prediction:** Predict, for any station *s* at future time (hourly) *t*, the number of available bikes and docks.
-- **Behavior:** Predict, for any station *s* at future time (hourly) *t*, the number of bikes rented by Bluebike members vs casual riders.
 
 ### How we measure success:
 - Keep **average error ≈ 3 bikes** and **typical squared error ≈ 5 bikes RMSE** on the top ~50 stations.
@@ -44,7 +41,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
 - Beat simple baselines: “use last hour” and “use the average for this hour of the week.”
 
 ## 3) Data to Collect & How
-### Trip history (CSV)
+### Trip history
 - **What:** start/end time, start/end station, rider type (member/casual), trip duration.
 - **Why:** Data used to identify bike usage patterns at different locations and times.
 - **Where:** [Bluebikes website (monthly data)](https://s3.amazonaws.com/hubway-data/index.html).
@@ -54,7 +51,7 @@ We will use Bluebikes’ public data to study demand **by station and time** and
   - Ensure geographic diversity (e.g., downtown, campus areas, residential neighborhoods).
   - Keep the set fixed for test to avoid selection leakage.
 
-### 3.2 Weather (optional)
+### 3.2 Weather
 - **What:** hourly temperature, rain/snow, wind, general condition.
 - **Why:** Weather strongly affects bike use.
 - **Where:** [National Weather Service (monthly data)](https://www.weather.gov/wrh/climate?wfo=box) or another similar service
@@ -100,8 +97,7 @@ After feature selection, we retained a compact set of features. Empirically, pai
 
 
 ## 5) Visualization Plan
-- **Interactive heat map:** display prediction of bike availability of all bluebike stops on a map through different color/size based on each location's predicted availability
-- **Time charts:** show actual vs predicted bikes from testing data set
+- **Interactive Map Visualization:** Use an interactive map component (Leaflet) to display the predicted bike availability at all Bluebikes stations. Each station will be represented by color and/or marker size corresponding to the predicted number of available bikes. The map will support zooming, panning, and tooltip interaction for detailed station-level insights.
 
 ## 6) Test Plan
 - **Train/test split by date:** Train on data collected between January 2022 - December 2024. Test on data collected beginning in January 2025. Approximately 75% training, 25% test.
@@ -109,17 +105,20 @@ After feature selection, we retained a compact set of features. Empirically, pai
 - **Compare with baselines:** make sure we improve on “last value” and “hour‑of‑week average.”  
 - **Small experiments:** remove weather or recent‑history features to see how much they help.
 
-## 7) Repository Layout (proposed)
-bluebikes-forecast/
+## 7) Repository Layout
+DS-X-bluebikes-demand-forecast/
   README.md
+  data/
+    weather.dta  （Stata data file）
   flask/
     app.py
     requirement.txt
-    model.joblib
-    bike_multi_xgb_model.joblib
     simulate_model.py
     test.py
     testagain.py
+  pipeline/
+    train_model.py
+    data_clean.do  （Stata pipeline script）
   nextjs/
     app/
       api/
@@ -131,10 +130,10 @@ bluebikes-forecast/
           route.ts
         weather/
           route.ts
+      globals.css
+      layout.tsx
       map/
         page.tsx
-      layout.tsx
-      globals.css
       page.tsx
     components/
       bike-map.tsx
@@ -148,21 +147,20 @@ bluebikes-forecast/
     lib/
       types.ts
       utils.ts
-    public/
+    next.config.ts
+    package-lock.json
+    package.json
+    postcss.config.mjs
     README_BIKES.md
     README.md
-    package.json
-    package-lock.json
-    tsconfig.json
     tailwind.config.ts
-    next.config.ts
+    tsconfig.json
 
-## 8) References (to cite in the report)
-- Bluebikes System Data page; GBFS feed links and station list information.  
-- GBFS specification (station_information capacity; station_status availability).  
-- OpenWeather API docs for hourly and historical data (if used).
-
-> We will add exact URLs and data license text in the final report README once the repo is created.
+## 8) References
+- Bluebikes System Data — Official Bluebikes open data portal, including GBFS feed links and station list metadata.
+- GBFS Specification — General Bikeshare Feed Specification, covering station_information (capacity) and station_status (availability) fields.
+- Open-Meteo API Documentation — Open-source weather API providing hourly and historical weather data used for environmental feature integration.
+- NOAA National Centers for Environmental Information (NCEI) — Official U.S. government database providing historical weather records, including wind speed, temperature, and precipitation data for the Boston area.
 
 ## PS
 All in all, this experience has been extremely valuable for us, and we sincerely thank the DS+X Hackathon organizers for their strong support.
