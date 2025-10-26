@@ -26,38 +26,38 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
   }, []);
 
   const getMarkerColor = (station: BikeStation) => {
-    // 如果有预测数据，使用预测值；否则使用当前值
+    // if there is prediction data, use prediction value; otherwise use current value
     const availability =
       station.predicted_bikes_available !== undefined
         ? station.predicted_bikes_available
         : station.num_bikes_available;
 
-    if (availability === 0) return "#ef4444"; // 红色：没有单车
-    if (availability <= 3) return "#f59e0b"; // 橙色：单车很少
-    if (availability <= 7) return "#3b82f6"; // 蓝色：单车中等
-    return "#10b981"; // 绿色：单车充足
+    if (availability === 0) return "#ef4444"; // red: no bikes
+    if (availability <= 3) return "#f59e0b"; // orange: few bikes
+    if (availability <= 7) return "#3b82f6"; // blue: medium bikes
+    return "#10b981"; // green: plenty of bikes
   };
 
-  // 获取标记半径（根据容量和预测状态）
+  // get marker radius (based on capacity and prediction status)
   const getMarkerRadius = (station: BikeStation) => {
     const capacity = station.capacity;
     const isPredicting = station.predicted_bikes_available !== undefined;
 
-    // 基础半径
+    // base radius
     let baseRadius = 6;
     if (capacity > 30) baseRadius = 10;
     else if (capacity > 20) baseRadius = 8;
 
-    // 如果在预测模式，根据单车数量调整大小
+    // if in prediction mode, adjust size based on bike numbers
     if (isPredicting) {
       const availability = station.predicted_bikes_available!;
       const utilizationRate = availability / capacity;
 
-      // 根据使用率调整大小（0.8-1.3倍）
+      // adjust size based on utilization rate (0.8-1.3x)
       if (utilizationRate > 0.7) {
-        return baseRadius * 1.3; // 单车很多，放大标记
+        return baseRadius * 1.3; // many bikes, enlarge marker
       } else if (utilizationRate < 0.2) {
-        return baseRadius * 0.8; // 单车很少，缩小标记
+        return baseRadius * 0.8; // few bikes, shrink marker
       }
     }
 
@@ -91,7 +91,7 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
           ? station.predicted_bikes_available
           : station.num_bikes_available;
 
-        // 使用包含预测状态的 key 来强制重新渲染
+        // use key containing prediction status to force re-render
         const markerKey = `${station.station_id}-${availability}-${isPredicting}`;
 
         return (
@@ -121,14 +121,6 @@ export function BikeMap({ stations, onStationClick }: BikeMapProps) {
                       {station.name}
                     </h3>
                   </div>
-                  {station.predicted_bikes_available !== undefined && (
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-blue-100 text-blue-700"
-                    >
-                      Predicted
-                    </Badge>
-                  )}
                 </div>
 
                 <div className="space-y-2">

@@ -3,45 +3,45 @@ import pandas as pd
 
 class BikeShareSimulator:
     """
-    模拟的共享单车需求预测模型
-    预测每个站点的单车进出量
+    simulate bike share demand prediction model
+    predict bike arrivals and departures for each station
     """
     
     def __init__(self):
-        # 设置随机种子以获得可重复的结果
+        # set random seed to get reproducible results
         np.random.seed(42)
         
-        # 定义各个特征的权重（模拟真实模型的影响因子）
+        # define weights for each feature (simulated real model influence factors)
         self.weights = {
-            'temperature': 0.35,      # 温度对需求的影响
-            'rainfall': -0.15,        # 降雨负向影响
-            'hour_factor': 0.65,      # 小时是最重要的因素
-            'weekend_factor': 0.15,   # 周末因素
-            'month_factor': 0.20,     # 月份因素（季节性）
+            'temperature': 0.35,      # temperature influence on demand
+            'rainfall': -0.15,        # rainfall negative influence
+            'hour_factor': 0.65,      # hour is the most important factor
+            'weekend_factor': 0.15,   # weekend factor
+            'month_factor': 0.20,     # month factor (seasonal)
         }
         
-        # 基础活动量（增加到原来的3倍）
+        # base activity (increase to 3 times original)
         self.base_activity = 36
         
     def predict(self, data):
         """
-        预测单车进出量
+        predict bike arrivals and departures
         
-        参数:
-            data: DataFrame 包含以下列:
-                - temperature: 温度 (°C) - 从API获取
-                - rainfall: 降雨量 (mm) - 从API获取
-                - hour_of_week: 一周中的小时 (0-167)
-                - isWeekend: 是否周末 (0 or 1)
-                - month: 月份 (1-12)
-                - prediction_minutes: 预测未来的分钟数 (0-60)
-                - longitude: 车站经度 (常量)
-                - latitude: 车站纬度 (常量)
+        parameters:
+            data: DataFrame containing the following columns:
+                - temperature: temperature (°C) - from API
+                - rainfall: rainfall (mm) - from API
+                - hour_of_week: hour of week (0-167)
+                - isWeekend: is weekend (0 or 1)
+                - month: month (1-12)
+                - prediction_minutes: prediction minutes (0-60)
+                - longitude: station longitude (constant)
+                - latitude: station latitude (constant)
         
-        返回:
+        return format:
             dict: {
-                'arrivals': 进站单车数量数组,
-                'departures': 出站单车数量数组
+                'arrivals': bike arrivals array,
+                'departures': bike departures array
             }
         """
         if isinstance(data, dict):
@@ -51,19 +51,19 @@ class BikeShareSimulator:
         departures = []
         
         for idx, row in data.iterrows():
-            # 提取特征
+            # extract features
             temperature = row.get('temperature', 20)
             rainfall = row.get('rainfall', 0)
             hour_of_week = row.get('hour_of_week', 0)
             is_weekend = row.get('isWeekend', 0)
             month = row.get('month', 6)
-            prediction_minutes = row.get('prediction_minutes', 0)  # 0-60分钟
+            prediction_minutes = row.get('prediction_minutes', 0)  # prediction minutes (0-60)
             longitude = row.get('longitude', -71.0589)
             latitude = row.get('latitude', 42.3601)
             
-            # 计算各个因素的得分
+            # calculate scores for each factor
             
-            # 1. 温度因素 (10-30°C最舒适，得分最高)
+            # 1. temperature factor (10-30°C most comfortable, highest score)
             if 15 <= temperature <= 25:
                 temp_score = 1.0
             elif temperature < 15:
@@ -71,49 +71,49 @@ class BikeShareSimulator:
             else:
                 temp_score = max(0, 1 - (temperature - 25) / 15)
             
-            # 2. 降雨因素 (降雨越多，需求越低)
+            # 2. rainfall factor (more rainfall, lower demand)
             rain_score = max(0, 1 - rainfall / 10)
             
-            # 3. 小时因素 (模拟一天中的高峰时段)
+            # 3. hour factor (simulate peak hours of the day)
             hour_of_day = hour_of_week % 24
             
-            # 通勤高峰: 7-9点和17-19点
+            # rush hour: 7-9am and 5-7pm
             if 7 <= hour_of_day <= 9 or 17 <= hour_of_day <= 19:
-                hour_score = 2.5  # 高峰时段（大幅增加）
+                hour_score = 2.5  # peak hour (大幅增加）
             elif 10 <= hour_of_day <= 16:
-                hour_score = 1.8  # 白天正常时段（增加）
+                hour_score = 1.8  # normal hour (增加）
             elif 20 <= hour_of_day <= 22:
-                hour_score = 1.2  # 晚上（增加）
+                hour_score = 1.2  # night (增加）
             else:
-                hour_score = 0.6  # 深夜/清晨（增加）
+                hour_score = 0.6  # late night/early morning (增加）
             
-            # 4. 周末因素
+            # 4. weekend factor
             if is_weekend:
-                weekend_score = 0.85  # 周末需求略低于工作日
-                # 周末高峰时段调整
+                weekend_score = 0.85  # weekend demand略低于工作日
+                # weekend peak hour adjustment
                 if 10 <= hour_of_day <= 18:
-                    hour_score = 2.0  # 周末白天活动时段（增加）
+                    hour_score = 2.0  # weekend daytime activity (增加）
             else:
                 weekend_score = 1.0
             
-            # 5. 月份因素 (季节性，春夏需求高)
+            # 5. month factor (seasonal, spring/summer demand high)
             month_scores = {
-                1: 0.6,  2: 0.65, 3: 0.8,   # 冬春
-                4: 0.95, 5: 1.1,  6: 1.2,   # 春夏
-                7: 1.2,  8: 1.15, 9: 1.1,   # 夏秋
-                10: 0.9, 11: 0.7, 12: 0.6   # 秋冬
+                1: 0.6,  2: 0.65, 3: 0.8,   # winter/spring
+                4: 0.95, 5: 1.1,  6: 1.2,   # summer/spring
+                7: 1.2,  8: 1.15, 9: 1.1,   # summer/fall
+                10: 0.9, 11: 0.7, 12: 0.6   # fall/winter
             }
             month_score = month_scores.get(month, 1.0)
             
-            # 6. 地理位置因素 (车站位置常量)
-            # 波士顿市中心: lat ≈ 42.36, lon ≈ -71.06
+            # 6. location factor (station location constant)
+            # Boston downtown: lat ≈ 42.36, lon ≈ -71.06
             distance_from_center = np.sqrt(
                 (latitude - 42.36)**2 + (longitude + 71.06)**2
             )
-            # 距离市中心越近，需求越高
+            # closer to downtown, higher demand
             location_score = max(0.5, 1 - distance_from_center * 20)
             
-            # 综合计算基础活动量
+            # calculate base activity
             base_activity = self.base_activity * (
                 1 +
                 self.weights['temperature'] * temp_score +
@@ -123,75 +123,75 @@ class BikeShareSimulator:
                 self.weights['month_factor'] * month_score
             ) * location_score
             
-            # 计算进出比例（基于时段和位置）
-            # 判断是否在市中心区域（距离市中心较近）
+            # calculate in/out ratio (based on time and location)
+            # check if in downtown area (closer to downtown)
             is_downtown = distance_from_center < 0.05
             
-            # 早高峰 (7-9点)
+            # rush hour (7-9am)
             if 7 <= hour_of_day <= 9:
                 if is_downtown:
-                    # 市中心：更多人骑车到达（上班）- 差值更大
+                    # downtown: more bikes arriving (上班）- 差值更大
                     arrival_ratio = 0.80
                     departure_ratio = 0.20
                 else:
-                    # 住宅区：更多人骑车离开（去上班）- 差值更大
+                    # residential area: more bikes leaving (去上班）- 差值更大
                     arrival_ratio = 0.20
                     departure_ratio = 0.80
-            # 晚高峰 (17-19点)
+            # late rush hour (17-19pm)
             elif 17 <= hour_of_day <= 19:
                 if is_downtown:
-                    # 市中心：更多人骑车离开（下班）- 差值更大
+                    # downtown: more bikes leaving (下班）- 差值更大
                     arrival_ratio = 0.20
                     departure_ratio = 0.80
                 else:
-                    # 住宅区：更多人骑车到达（下班回家）- 差值更大
+                    # residential area: more bikes arriving (下班回家）- 差值更大
                     arrival_ratio = 0.80
                     departure_ratio = 0.20
-            # 午休时段 (11-14点)
+            # lunch hour (11-14pm)
             elif 11 <= hour_of_day <= 14:
-                # 午餐时间，略有不平衡
+                # lunch time, slightly unbalanced
                 arrival_ratio = 0.60
                 departure_ratio = 0.40
-            # 其他时段
+            # other hours
             else:
-                # 有一定波动
+                # some fluctuation
                 arrival_ratio = 0.40
                 departure_ratio = 0.60
             
-            # 周末调整：周末进出也有差异
+            # weekend adjustment: weekend in/out has difference
             if is_weekend:
                 arrival_ratio = 0.55 + np.random.uniform(-0.10, 0.10)
                 departure_ratio = 1 - arrival_ratio
             
-            # 计算arrivals和departures
+            # calculate arrivals and departures
             arrival_count = base_activity * arrival_ratio
             departure_count = base_activity * departure_ratio
             
-            # 时间预测因子 (0-60分钟)
-            # 预测时间越远，不确定性越高，同时考虑需求的时间累积
-            # 将分钟转换为小时的比例用于计算
-            time_ratio = prediction_minutes / 60.0  # 0到1之间
+            # time prediction factor (0-60 minutes)
+            # prediction time further, uncertainty increases, considering time accumulation of demand
+            # convert minutes to hours ratio for calculation
+            time_ratio = prediction_minutes / 60.0  # 0 to 1
             
-            # 根据预测时间调整预测值
-            # 短期预测（0-30分钟）：线性增长
-            # 长期预测（30-60分钟）：增速放缓
+            # adjust prediction value based on prediction time
+            # short term prediction (0-30 minutes): linear growth
+            # long term prediction (30-60 minutes): slow growth
             if prediction_minutes <= 30:
-                time_factor = 0.5 + (time_ratio * 1.0)  # 0.5 到 1.0
+                time_factor = 0.5 + (time_ratio * 1.0)  # 0.5 to 1.0
             else:
-                time_factor = 1.0 + ((time_ratio - 0.5) * 0.4)  # 1.0 到 1.2
+                time_factor = 1.0 + ((time_ratio - 0.5) * 0.4)  # 1.0 to 1.2
             
             arrival_count = arrival_count * time_factor
             departure_count = departure_count * time_factor
             
-            # 添加随机噪声，预测时间越远噪声越大
-            noise_scale = 2.0 + (prediction_minutes / 60.0) * 2.0  # 2.0到4.0（增加噪声幅度）
+            # add random noise, prediction time further, noise increases
+            noise_scale = 2.0 + (prediction_minutes / 60.0) * 2.0  # 2.0 to 4.0 (increase noise amplitude)
             arrival_noise = np.random.normal(0, noise_scale)
             departure_noise = np.random.normal(0, noise_scale)
             
             arrival_count = max(0, arrival_count + arrival_noise)
             departure_count = max(0, departure_count + departure_noise)
             
-            # 四舍五入到整数（单车数量）
+            # round to nearest integer (bike count)
             arrivals.append(round(arrival_count))
             departures.append(round(departure_count))
         
@@ -204,19 +204,19 @@ class BikeShareSimulator:
                       hour_of_week, isWeekend, month, 
                       prediction_minutes, longitude, latitude):
         """
-        单个车站预测的便捷方法
+        convenient method for single station prediction
         
-        参数:
-            temperature: 温度 (从API获取)
-            rainfall: 降雨量 (从API获取)
-            hour_of_week: 一周中的小时
-            isWeekend: 是否周末
-            month: 月份
-            prediction_minutes: 预测未来的分钟数 (0-60)
-            longitude: 车站经度 (常量)
-            latitude: 车站纬度 (常量)
+        parameters:
+            temperature: temperature (from API)
+            rainfall: rainfall (from API)
+            hour_of_week: hour of week
+            isWeekend: is weekend
+            month: month
+            prediction_minutes: prediction minutes (0-60)
+            longitude: station longitude (constant)
+            latitude: station latitude (constant)
         
-        返回:
+        return format:
             dict: {'arrivals': int, 'departures': int}
         """
         data = {
@@ -236,6 +236,6 @@ class BikeShareSimulator:
         }
 
 
-# 创建全局模型实例
+# create global model instance
 model = BikeShareSimulator()
 

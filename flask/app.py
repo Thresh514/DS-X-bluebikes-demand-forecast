@@ -4,10 +4,7 @@ from flask_cors import CORS
 from test import model
 
 app = Flask(__name__)
-CORS(app)  # 允许 Next.js 请求
-
-# 使用模拟模型
-# model = joblib.load("models/xgb_model.pkl")  # 真实模型
+CORS(app)
 
 @app.route("/")
 def home():
@@ -16,32 +13,32 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
     """
-    预测车站单车进出量
+    predict bike arrivals and departures
     
-    期望的JSON格式:
-    单个车站:
+    expected JSON format:
+    single station:
     {
-        "temperature": 20,          // 温度 (从天气API获取)
-        "rainfall": 0,              // 降雨量 (从天气API获取)
-        "hour_of_week": 48,         // 一周中的小时
-        "isWeekend": 0,             // 是否周末
-        "month": 6,                 // 月份
-        "prediction_minutes": 30,   // 预测未来的分钟数 (0-60)
-        "longitude": -71.0589,      // 车站经度 (常量)
-        "latitude": 42.3601         // 车站纬度 (常量)
+        "temperature": 20,          // temperature
+        "rainfall": 0,              // rainfall
+        "hour_of_week": 48,         // hour_of_week
+        "isWeekend": 0,             // isWeekend (0 or 1)
+        "month": 6,                 // month (1-12)
+        "prediction_minutes": 30,   // prediction_minutes (0-60)
+        "longitude": -71.0589,      // longitude
+        "latitude": 42.3601         // latitude
     }
     
-    多个车站(数组):
+    multiple stations (array):
     [
-        {...},  // 车站1
-        {...}   // 车站2
+        {...},  // station 1
+        {...}   // station 2
     ]
     
-    返回格式:
+    return format:
     {
         "predictions": [
-            {"arrivals": 10, "departures": 8},
-            {"arrivals": 15, "departures": 12}
+            {"arrivals": 10, "departures": 8},  // arrivals
+            {"arrivals": 15, "departures": 12}  // departures
         ]
     }
     """
