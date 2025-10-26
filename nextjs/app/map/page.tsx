@@ -237,7 +237,10 @@ export default function MapPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
-                  prediction time: {predictionHours === 0 ? "real-time" : `${predictionHours} hours later`}
+                  prediction time:{" "}
+                  {predictionHours === 0
+                    ? "real-time"
+                    : `${predictionHours} hours later`}
                 </span>
                 {predicting && (
                   <span className="text-xs text-blue-600 flex items-center gap-1">

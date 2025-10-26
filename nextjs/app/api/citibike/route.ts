@@ -4,10 +4,9 @@ import type { BikeStation, StationInfo, StationStatus } from "@/lib/types";
 export async function GET() {
   try {
     const [infoRes, statusRes] = await Promise.all([
-      fetch(
-        "https://gbfs.lyft.com/gbfs/2.3/bkn/en/station_information.json",
-        { cache: "no-store" },
-      ),
+      fetch("https://gbfs.lyft.com/gbfs/2.3/bkn/en/station_information.json", {
+        cache: "no-store",
+      }),
       fetch("https://gbfs.lyft.com/gbfs/2.3/bkn/en/station_status.json", {
         cache: "no-store",
       }),
@@ -46,5 +45,3 @@ export async function GET() {
     );
   }
 }
-
-
