@@ -40,7 +40,7 @@ export default function MapPage() {
     null,
   );
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [predictionMinutes, setPredictionMinutes] = useState(0);
+  const [predictionHours, setPredictionHours] = useState(0);
   const [predicting, setPredicting] = useState(false);
 
   const fetchStations = async (isRefresh = false) => {
@@ -57,12 +57,10 @@ export default function MapPage() {
       setFilteredStations(data);
       setLastUpdate(new Date());
 
-      // 如果有预测时间，立即获取预测数据
-      if (predictionMinutes > 0) {
-        await fetchPredictions(data, predictionMinutes);
-      }
+      // get predictions based on hours, 0 means real-time (clear predictions)
+      await fetchPredictions(data, predictionHours * 60);
     } catch (error) {
-      console.error("获取站点数据失败:", error);
+      console.error("Failed to fetch station data:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -74,7 +72,7 @@ export default function MapPage() {
     minutes: number,
   ) => {
     if (minutes === 0) {
-      // 如果预测时间为0，清除预测数据
+      // if prediction time is 0, clear prediction data
       const updated = stationsData.map((s) => ({
         ...s,
         predicted_arrivals: undefined,
@@ -88,11 +86,11 @@ export default function MapPage() {
     try {
       setPredicting(true);
 
-      // 1. 获取天气数据
+      // 1. fetch weather data
       const weatherRes = await fetch("/api/weather");
       const weatherData = await weatherRes.json();
 
-      // 2. 准备当前时间信息
+      // 2. prepare current time information
       const now = new Date();
       const hour = now.getHours();
       const day = now.getDay();
@@ -100,7 +98,7 @@ export default function MapPage() {
       const isWeekend = day === 0 || day === 6 ? 1 : 0;
       const hour_of_week = day * 24 + hour;
 
-      // 3. 为每个站点准备预测请求数据
+      // 3. prepare prediction request data for each station
       const predictionRequests = stationsData.map((station) => ({
         temperature: weatherData.temperature || 20,
         rainfall: weatherData.precipitation || 0,
@@ -112,7 +110,7 @@ export default function MapPage() {
         latitude: station.lat,
       }));
 
-      // 4. 批量调用预测API
+      // 4. batch call prediction API
       const predictRes = await fetch("/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,12 +119,12 @@ export default function MapPage() {
 
       const predictData = await predictRes.json();
 
-      // 5. 将预测结果合并到站点数据，并计算预测后的单车数量
+      // 5. merge prediction results into station data, and calculate predicted bike numbers
       const updatedStations = stationsData.map((station, index) => {
         const arrivals = predictData.predictions[index]?.arrivals || 0;
         const departures = predictData.predictions[index]?.departures || 0;
 
-        // 计算预测后的单车数量：当前数量 + 进站 - 出站
+        // calculate predicted bike numbers: current number + arrivals - departures
         const predictedBikes = Math.max(
           0,
           Math.min(
@@ -135,7 +133,7 @@ export default function MapPage() {
           ),
         );
 
-        // 计算预测后的停车桩数量
+        // calculate predicted dock numbers
         const predictedDocks = station.capacity - predictedBikes;
 
         return {
@@ -150,7 +148,7 @@ export default function MapPage() {
       setStations(updatedStations);
       setFilteredStations(updatedStations);
     } catch (error) {
-      console.error("获取预测数据失败:", error);
+      console.error("Failed to fetch prediction data:", error);
     } finally {
       setPredicting(false);
     }
@@ -195,7 +193,7 @@ export default function MapPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 flex flex-col items-center justify-center">
           <LoadingSpinner size="lg" />
           <p className="text-lg text-gray-600">
             Loading Bluebikes real-time data...
@@ -239,23 +237,20 @@ export default function MapPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
-                  预测时间:{" "}
-                  {predictionMinutes === 0
-                    ? "实时"
-                    : `${predictionMinutes} 分钟后`}
+                  prediction time: {predictionHours === 0 ? "real-time" : `${predictionHours} hours later`}
                 </span>
                 {predicting && (
                   <span className="text-xs text-blue-600 flex items-center gap-1">
                     <RefreshCw className="h-3 w-3 animate-spin" />
-                    预测中...
+                    predicting...
                   </span>
                 )}
               </div>
               <TimeSlider
                 defaultValue={0}
-                onTimeChange={(minutes) => {
-                  setPredictionMinutes(minutes);
-                  fetchPredictions(stations, minutes);
+                onTimeChange={(hours) => {
+                  setPredictionHours(hours);
+                  fetchPredictions(stations, hours * 60);
                 }}
               />
             </div>
@@ -286,7 +281,7 @@ export default function MapPage() {
                   <span className="text-3xl text-green-600">
                     {stats.totalStations}
                   </span>{" "}
-                  stations
+                  stations available
                 </div>
                 <div className="text-lg p-2 font-bold space-x-4">
                   <span className="text-3xl text-blue-600">

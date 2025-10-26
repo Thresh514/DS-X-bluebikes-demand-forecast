@@ -16,7 +16,7 @@ interface BikeStationCardProps {
 }
 
 export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
-  // 如果有预测数据，使用预测值；否则使用当前值
+  // if there is prediction data, use prediction value; otherwise use current value
   const bikeAvailability =
     station.predicted_bikes_available !== undefined
       ? station.predicted_bikes_available
@@ -27,7 +27,7 @@ export function BikeStationCard({ station, onClick }: BikeStationCardProps) {
       : station.num_docks_available;
   const utilizationRate = (bikeAvailability / station.capacity) * 100;
 
-  // 是否在预测模式
+  // whether in prediction mode
   const isPredicting = station.predicted_bikes_available !== undefined;
 
   const getBikeStatusVariant = () => {

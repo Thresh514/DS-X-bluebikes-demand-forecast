@@ -27,7 +27,7 @@ export async function GET() {
 
     const data = await response.json();
 
-    // 获取美东时区的当前时间
+    // get current time in Eastern Time Zone
     const nowET = new Date().toLocaleString("en-US", {
       timeZone: "America/New_York",
     });
@@ -43,13 +43,13 @@ export async function GET() {
         .slice(0, 13)
         .replace("T", " ") + ":00";
 
-    // 查找最接近当前时间的数据
+    // find data closest to current time
     const currentIndex = data.hourly.time.findIndex(
       (t: string) => t === currentHourET,
     );
     const index = currentIndex >= 0 ? currentIndex : 0;
 
-    // 返回当前小时的天气数据（基于1小时timeframe）
+    // return weather data for current hour (based on 1 hour timeframe)
     const weatherData: WeatherData = {
       temperature: data.hourly.temperature_2m[index],
       windSpeed: data.hourly.wind_speed_10m[index],

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Clock } from "lucide-react";
 
 interface TimeSliderProps {
-  onTimeChange?: (minutes: number) => void;
+  onTimeChange?: (hours: number) => void;
   defaultValue?: number;
   className?: string;
 }
@@ -14,26 +14,26 @@ export function TimeSlider({
   defaultValue = 0,
   className = "",
 }: TimeSliderProps) {
-  const [minutes, setMinutes] = useState(defaultValue);
+  const [hours, setHours] = useState(defaultValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    setMinutes(value);
+    setHours(value);
     onTimeChange?.(value);
   };
 
-  const formatTime = (mins: number) => {
+  const formatTime = (hrs: number) => {
     const now = new Date();
-    const futureTime = new Date(now.getTime() + mins * 60000);
+    const futureTime = new Date(now.getTime() + hrs * 60 * 60000);
     return futureTime.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
   };
 
-  const getTimeLabel = (mins: number) => {
-    if (mins === 0) return "now";
-    return `${mins} minutes later`;
+  const getTimeLabel = (hrs: number) => {
+    if (hrs === 0) return "now";
+    return `${hrs} hours later`;
   };
 
   return (
@@ -47,9 +47,9 @@ export function TimeSlider({
         </div>
         <div className="text-right">
           <div className="text-lg font-bold text-blue-600">
-            {formatTime(minutes)}
+            {formatTime(hours)}
           </div>
-          <div className="text-xs text-gray-500">{getTimeLabel(minutes)}</div>
+          <div className="text-xs text-gray-500">{getTimeLabel(hours)}</div>
         </div>
       </div>
 
@@ -57,21 +57,21 @@ export function TimeSlider({
         <input
           type="range"
           min="0"
-          max="60"
+          max="12"
           step="1"
-          value={minutes}
+          value={hours}
           onChange={handleChange}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
           style={{
-            background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${(minutes / 60) * 100}%, #E5E7EB ${(minutes / 60) * 100}%, #E5E7EB 100%)`,
+            background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${(hours / 12) * 100}%, #E5E7EB ${(hours / 12) * 100}%, #E5E7EB 100%)`,
           }}
         />
         <div className="flex justify-between mt-2 text-xs text-gray-500">
-          <span>0 minutes</span>
-          <span>15 minutes</span>
-          <span>30 minutes</span>
-          <span>45 minutes</span>
-          <span>60 minutes</span>
+          <span>0 hour</span>
+          <span>3 hours</span>
+          <span>6 hours</span>
+          <span>9 hours</span>
+          <span>12 hours</span>
         </div>
       </div>
 
