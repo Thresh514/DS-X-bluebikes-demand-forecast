@@ -73,9 +73,9 @@ Each sample represents a station’s bike/dock availability at a given time, and
 
 ### Main Models
 
-* **Linear regression:** interpretable baseline to capture simple trends.
-* **Tree-based models:** Random Forest or Gradient Boosting (e.g., XGBoost/LightGBM) to capture nonlinear interactions.
-  All models will use **time-ordered train/test splits** and **early stopping** to prevent overfitting.
+* **XGBoost (linear booster / gblinear):** chosen as the primary regressor after feature selection, given the small feature space and weak inter-feature correlations.
+* **Linear regression:** used as a simple, interpretable baseline.
+  All models use **time-ordered train/test splits** and **early stopping** (where applicable) to prevent overfitting.
 
 ### Features
 
@@ -84,12 +84,20 @@ Each sample represents a station’s bike/dock availability at a given time, and
 * Station capacity and popularity rank
 * Weather features (temperature, precipitation, wind, condition)
 
+After feature selection, we retained a compact set of features. Empirically, pairwise correlations among retained features and with the target were generally weak, which informed our choice to emphasize a linear booster in XGBoost and a linear regression baseline.
+
 ### Model Evaluation & Checks
 
 * Compare model performance against the persistence baseline using MAE and RMSE.
 * Ensure **no future data leakage** by using chronological splits.
 * Analyze **feature importance** to explain which factors drive predictions.
   
+### Empirical Findings & Data Quality
+
+- We observed substantial noise in the station availability time series and a high prevalence of outliers.
+- The live data collection pipeline (GBFS station_status snapshots) exhibited occasional missing, duplicated, or misaligned records, which introduced label noise and reduced signal quality.
+- As a result, the retained features displayed low or near‑zero correlation with targets in many stations/time windows, and models offered limited lift over the persistence baseline.
+
 
 ## 5) Visualization Plan
 - **Interactive heat map:** display prediction of bike availability of all bluebike stops on a map through different color/size based on each location's predicted availability
@@ -101,63 +109,61 @@ Each sample represents a station’s bike/dock availability at a given time, and
 - **Compare with baselines:** make sure we improve on “last value” and “hour‑of‑week average.”  
 - **Small experiments:** remove weather or recent‑history features to see how much they help.
 
-## 7) Project Timeline (8 weeks)
-* **W1**: Implement data ingesters (trips, station list, GBFS logger, weather); define schemas.
-* **W2**: Feature engineering; baselines + first tree model; build prototype dashboard.
-* **W3–W4**: Model tuning; add risk classifier; member vs. casual analysis; refine visuals.
-* **W5**: Backtesting, error analysis, robustness & calibration.
-* **W6–W7**: Iterations, additional backtesting, prepare presentation.
-* **W8**: Final polishing for presentation & README.
-
-## 8) Deliverables
-- **Cleaned datasets** (documented tables for features/labels).  
-- **Reproducible notebooks/scripts** for ingestion, features, training, and evaluation.  
-- **Final presentation** with methods, results, and limitations.
-
-## 9) Risks & Mitigations
-- **Concept drift/seasonality**: demand varies with weather and semester schedules → add weather and calendar features; evaluate by month.  
-- **Rebalancing noise**: truck rebalancing shifts inventory → detect jump anomalies and include as feature; evaluate classification (risk) which is less sensitive to exact counts.  
-- **Scope creep**: limit to **top 50 busiest stations** and **1‑hour horizon**.
-
-## 10) Stretch Goals (nice-to-have)
-- **Application:** Fullstack applicaiton utilizing our trained model.
-- **15-min horizon** forecasts and uncertainty intervals (quantile regression).
-
-## 11) Repository Layout (proposed)
+## 7) Repository Layout (proposed)
 bluebikes-forecast/
   README.md
-  data/
-    raw/              # trip CSVs, station list, weather pulls
-    gbfs_logs/        # station_status snapshots (our own archive)
-    processed/        # feature/label tables
-  src/
-    ingest/
-      download_trips.py
-      fetch_station_info.py
-      gbfs_logger.py
-      fetch_weather.py
-    features/
-      build_datasets.py
-    models/
-      train_regression.py
-      train_classifier.py
-    viz/
-      dashboard_app.py
-  notebooks/
-    01_eda.ipynb
-    02_feature_checks.ipynb
-    03_model_baselines.ipynb
-  LICENSE
+  flask/
+    app.py
+    requirement.txt
+    model.joblib
+    bike_multi_xgb_model.joblib
+    simulate_model.py
+    test.py
+    testagain.py
+  nextjs/
+    app/
+      api/
+        bikes/
+          route.ts
+        citibike/
+          route.ts
+        predict/
+          route.ts
+        weather/
+          route.ts
+      map/
+        page.tsx
+      layout.tsx
+      globals.css
+      page.tsx
+    components/
+      bike-map.tsx
+      bike-station-card.tsx
+      ui/
+        badge.tsx
+        button.tsx
+        card.tsx
+        loading-spinner.tsx
+        time-slider.tsx
+    lib/
+      types.ts
+      utils.ts
+    public/
+    README_BIKES.md
+    README.md
+    package.json
+    package-lock.json
+    tsconfig.json
+    tailwind.config.ts
+    next.config.ts
 
-## 12) Team Roles (initial)
-- **Data ingestion & engineering**: Jiayong Tu, Fenglin Hu  
-- **Modeling & evaluation**: Matthew Yan, Mingyu Shen  
-- **Visualization & report**: all members, with code review rotations
-
-## 13) References (to cite in the report)
+## 8) References (to cite in the report)
 - Bluebikes System Data page; GBFS feed links and station list information.  
 - GBFS specification (station_information capacity; station_status availability).  
 - OpenWeather API docs for hourly and historical data (if used).
 
 > We will add exact URLs and data license text in the final report README once the repo is created.
+
+## PS
+All in all, this experience has been extremely valuable for us, and we sincerely thank the DS+X Hackathon organizers for their strong support.
 
