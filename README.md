@@ -2,6 +2,7 @@
 
 **Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen  
 **Course:** CS 506
+**Midpoint Video Link:** https://www.youtube.com/watch?v=Canmt5Fn1VQ
 
 ---
 
