@@ -1,7 +1,7 @@
 # Bluebikes Demand Forecasting — Project Proposal
 
 **Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen  
-**Course:** CS 506
+**Course:** CS 506 </br>
 **Midpoint Video Link:** https://www.youtube.com/watch?v=Canmt5Fn1VQ
 
 ---
