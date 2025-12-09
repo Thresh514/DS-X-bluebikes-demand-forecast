@@ -37,5 +37,6 @@ next-env.d.ts
 /__pycache__/
 
 venv/
-*.csv
+/data/*.csv
+/data/2024_data/*.csv
 *.zip

@@ -35,7 +35,8 @@ jobs:
           cd flask
           python -c "from flask import Flask; print('Flask import successful')"
           python -c "import pandas; print('Pandas import successful')"
-          python -c "import xgboost; print('XGBoost import successful')"
+          python -c "import numpy; print('Numpy import successful')"
+          python -c "import sklearn; print('Scikit-learn import successful')"
 
       - name: Verify Flask app structure
         run: |
