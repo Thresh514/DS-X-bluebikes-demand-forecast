@@ -36,7 +36,7 @@ next-env.d.ts
 *.joblib
 /__pycache__/
 
-venv/
+venv
 /data/*.csv
 /data/2024_data/*.csv
 *.zip

@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from flask_cors import CORS
-from test import model
+# Use simulated model instead of real model (comment out if real model is available)
+from simulate_model import BikeShareSimulator
+model = BikeShareSimulator()
+# from test import model  # Uncomment when real model file is available
 
 app = Flask(__name__)
 CORS(app)
@@ -66,4 +69,4 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
