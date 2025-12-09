@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { BikeStation, StationInfo, StationStatus } from "@/lib/types";
+import { TARGET_STATIONS } from "@/lib/target-stations";
 
 export async function GET() {
   try {
@@ -38,8 +39,31 @@ export async function GET() {
       };
     });
 
-    // 3. return JSON
-    return NextResponse.json(merged);
+    // 3. Filter to only include target stations
+    // Direct name matching - station names should match exactly
+    const filtered = merged.filter((station) =>
+      TARGET_STATIONS.includes(station.name),
+    );
+
+    // Log matched stations for debugging
+    console.log(
+      `Filtered ${filtered.length} target stations out of ${merged.length} total stations`,
+    );
+    if (filtered.length < TARGET_STATIONS.length) {
+      console.warn(
+        `Warning: Only found ${filtered.length} out of ${TARGET_STATIONS.length} target stations`,
+      );
+      const foundNames = filtered.map((s) => s.name);
+      const missing = TARGET_STATIONS.filter(
+        (name) => !foundNames.includes(name),
+      );
+      if (missing.length > 0) {
+        console.warn("Missing stations:", missing);
+      }
+    }
+
+    // 4. return filtered JSON (only target stations)
+    return NextResponse.json(filtered);
   } catch (error) {
     console.error("Error fetching Bluebikes data:", error);
     return NextResponse.json(

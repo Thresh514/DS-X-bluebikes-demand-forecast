@@ -1,0 +1,23 @@
+// Target stations for prediction - Top 20 most active stations
+export const TARGET_STATIONS = [
+  "MIT at Mass Ave / Amherst St",
+  "Central Square at Mass Ave / Essex St",
+  "Harvard Square at Mass Ave/ Dunster",
+  "Ames St at Main St",
+  "MIT Pacific St at Purrington St",
+  "Charles Circle - Charles St at Cambridge St",
+  "MIT Vassar St",
+  "Beacon St at Massachusetts Ave",
+  "Christian Science Plaza - Massachusetts Ave at Westland Ave",
+  "Boylston St at Massachusetts Ave",
+  "Boylston St at Fairfield St",
+  "South Station - 700 Atlantic Ave",
+  "Forsyth St at Huntington Ave",
+  "Mass Ave at Albany St",
+  "Commonwealth Ave at Agganis Way",
+  "Central Sq Post Office / Cambridge City Hall at Mass Ave",
+  "Newbury St at Hereford St",
+  "Harvard University River Houses at DeWolfe St / Memorial Dr",
+  "MIT Stata Center at Vassar St / Main St",
+  "Landmark Center - Brookline Ave at Park Dr",
+];

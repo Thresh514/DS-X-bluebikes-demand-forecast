@@ -215,6 +215,9 @@ export default function MapPage() {
               <p className="text-sm text-gray-600">
                 {lastUpdate &&
                   `Last updated: ${lastUpdate.toLocaleTimeString("en-US")}`}
+                <span className="ml-2 text-xs text-gray-500">
+                  (Showing 20 target stations)
+                </span>
               </p>
             </div>
             <Button
