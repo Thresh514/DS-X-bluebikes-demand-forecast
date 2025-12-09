@@ -87,17 +87,10 @@ export default function Home() {
             }}
             className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-md"
           >
-            Model Results
-          </button>
-          <button className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-md">
-            Learn More
+            Visualizations
           </button>
         </div>
       </main>
-
-      <footer className="mt-16 text-center text-gray-600 dark:text-gray-400">
-        <p>© 2025 Bluebikes Demand Forecast. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
