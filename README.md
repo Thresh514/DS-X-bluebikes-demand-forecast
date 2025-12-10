@@ -1,8 +1,22 @@
 # Bluebikes Demand Forecasting — Project Proposal
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen  
 **Course:** CS 506 </br>
-**Video Link:**
+**Video Link:** 
+**Website Link:** https://bluebikes-demand-forecast.vercel.app/
+
+---
+
+# Project Description
+This project predicts hourly station-level bike demand (inflow and outflow) using historical Bluebikes trip data. We developed a comprehensive data processing pipeline and advanced statistical modeling framework to address the unique challenges of bike-share demand forecasting.
+
+---
+
+### Why It Matters
+- **Riders:** Can avoid empty or full stations before they arrive.  
+- **Planners:** Can identify problem stations and times and act earlier.
+
+---
 
 ## How to build and run (reproducible steps)
 1. **Install prerequisites:** Python 3.10+, Node.js 18+, and `make` must be available on your PATH.
@@ -15,17 +29,8 @@
 
 ---
 
-# Project Description
-This project predicts hourly station-level bike demand (inflow and outflow) using historical Bluebikes trip data. We developed a comprehensive data processing pipeline and advanced statistical modeling framework to address the unique challenges of bike-share demand forecasting.
-
----
-
-## Why It Matters
-- **Riders:** Can avoid empty or full stations before they arrive.  
-- **Planners:** Can identify problem stations and times and act earlier.
-
-
 ### Initial Challenge
+
 
 Early exploration revealed that many stations exhibit extremely low variance in hourly counts, with characteristics including:
 - Zero inflow/outflow during most hours
@@ -37,13 +42,13 @@ These patterns violate assumptions of standard regression models, motivating our
 
 ---
 
-## Methodology
+# Methodology
 
-### 1. Feature Engineering
+## 1. Feature Engineering
 
 We extracted rich features from raw trip data (`feature_updated.csv`) to capture station-specific behavior patterns:
 
-# Temporal Features
+### Temporal Features
 - Hour of day (0-23)
 - Day of week
 - Weekend indicator
@@ -51,14 +56,14 @@ We extracted rich features from raw trip data (`feature_updated.csv`) to capture
 - Month and season
 - Academic calendar periods (optional extension)
 
-# Station Operational Features
+### Station Operational Features
 - Member vs. casual rider ratio
 - Average outgoing trip duration
 - Unique rider counts per station
 - Lag variables (t-1, t-2 hours)
 - Rolling averages and variance
 
-# Spatial Features
+### Spatial Features
 - Latitude & longitude
 - Distance to major transit hubs
 - Proximity to Charles River and downtown
@@ -68,32 +73,32 @@ These features enable models to distinguish between high-traffic and low-traffic
 
 ---
 
-### 2. Distributional Analysis
+# 2. Distributional Analysis
 
 We analyzed empirical distributions of hourly demand to understand data-generating processes:
 
-# Key Findings
+### Key Findings
 - Long right tails (occasional spikes)
 - Excess structural zeros
 - Variance >> mean (overdispersion)
 - Peak hours violate Poisson equal-mean-variance assumption
 
-# Visualizations Created
+### Visualizations Created
 - Hour-of-day ridership curves per station
 - Hourly inflow/outflow histograms
 - Distribution of zero counts
 - Empirical variance vs. mean plots
 
-# Conclusion
+### Conclusion
 Single Poisson or Gaussian models cannot represent the true generative structure.
 
 ---
 
-#Data Visualization
+# Data Visualization
 
 To understand temporal demand patterns and guide model selection, we created a series of exploratory visualizations examining hourly bike flows at the station level. These plots reveal strong diurnal cycles, heavy skew in hourly counts, substantial zero-inflation, and long-tailed distributions—properties that directly informed our choice of count models.
 
-## 1. Hourly IN/OUT Time Series (Single Station)
+## Hourly IN/OUT Time Series (Single Station)
 
 <img width="471" height="236" alt="Screenshot 2025-12-10 at 09 38 34" src="https://github.com/user-attachments/assets/eb9e9133-5ad3-4736-b3ca-b80ea4e72d83" />
 
@@ -106,7 +111,7 @@ Highly repetitive daily structure, suggesting the demand is predictable and stro
 This visualization establishes temporal rhythm and motivates the use of hour-of-day and day-of-week features.
 
 
-## 2. Monthly Hour-of-Day Profiles (All Months in 2024)
+## Monthly Hour-of-Day Profiles (All Months in 2024)
 
 <img width="332" height="180" alt="Screenshot 2025-12-10 at 09 41 06" src="https://github.com/user-attachments/assets/150938fd-eb10-4d38-956d-6d8a6e872dfb" />
 
@@ -117,7 +122,7 @@ Warmer months (May–October) exhibit significantly higher volumes, while winter
 Seasonal scaling affects magnitude but not the underlying pattern.
 This confirmed that hourly effects are stable across time and that month and season should be included as model predictors.
 
-## 3. Distribution of Hourly IN/OUT Counts (Single Station)
+## Distribution of Hourly IN/OUT Counts (Single Station)
 
 <img width="600" height="188" alt="Screenshot 2025-12-10 at 09 40 36" src="https://github.com/user-attachments/assets/4a826ee2-b49f-4712-a024-053929b1ec39" />
 
@@ -127,7 +132,7 @@ Substantial variance relative to the mean, violating Poisson assumptions.
 Long tails that suggest overdispersion and rare extreme demand spikes.
 These patterns support using Negative Binomial (NB) or Zero-Inflated Negative Binomial (ZINB) models.
 
-## 4. System-Wide Distribution of Counts (All Stations)
+## System-Wide Distribution of Counts (All Stations)
 
 <img width="582" height="211" alt="Screenshot 2025-12-10 at 09 39 51" src="https://github.com/user-attachments/assets/3fd63179-225b-40b3-b12c-95f90dc9411e" />
 
@@ -137,13 +142,34 @@ A small set of highly active stations produce long count tails extending beyond 
 Severe global overdispersion and sparsity across the system.
 This visualization further solidifies the need for models capable of handling both overdispersion and excess zeros.
 
-### 3. Model Development and Selection
+# 3. Model Development and Selection
+
+## XGBoost Regression (Create before midterm but not used in the final work)
+
+We selected XGBoost as our primary modeling framework due to its ability to handle nonlinear dependencies, large datasets, and missing data. It is particularly effective in time-series forecasting contexts where station activity exhibits irregularities or abrupt changes.
+
+**The key strengths of XGBoost include:** 
+- Automatic handling of complex relationships and feature interactions (for example, between time, temperature, and location).
+- Robustness to outliers and incomplete data, which are common in real-time Bluebikes feeds.
+- Scalability to millions of hourly records while maintaining computational efficiency through parallel processing.
+- This approach allowed us to move beyond simple averages and capture nuanced fluctuations in station activity.
+
+**Preliminary Results:** 
+- On average, the model’s predictions differ from the actual counts by approximately one bike per station per hour, indicating high short-term accuracy.
+- The low RMSE (below two) demonstrates that predictions are generally close to observed values with few large deviations.
+- The model effectively captures short-term demand patterns and is suitable for near real-time forecasting applications.
+
+**Challenges** 
+- Timestamp inconsistency: Multiple formats across CSVs required custom parsers.
+- Low-variation stations: Flat time-series segments risked being misinterpreted as zero-variance noise.
+- Concept drift: Seasonal and academic-calendar changes caused shifts in typical ridership.
+- Data volume: The hourly aggregation of millions of records created performance and storage constraints.
 
 We implemented a progressive modeling strategy, moving from simple baseline models to more sophisticated count-based approaches. Each model was selected based on addressing specific limitations observed in the previous iteration.
 
 ---
 
-# Model 1: Poisson Regression (Baseline)
+## Poisson Regression (Baseline)
 
 Why We Started Here:
 - Natural choice for count data
@@ -178,7 +204,7 @@ Conclusion: While Poisson provided a reasonable baseline, the equidispersion ass
 
 ---
 
-# Model 2: Negative Binomial Regression
+## Negative Binomial Regression
 
 Why it was chosen
 
@@ -238,9 +264,9 @@ Remaining Limitations:
 
 ---
 
-# Model 3: Negative Binomial with Gradient Boosting
+## Negative Binomial with Gradient Boosting
 
-Why We Explored This Approach:
+**Why We Explored This Approach:**
 - Leverage ensemble methods to capture complex non-linear patterns
 - Automatically handle feature interactions
 - Potentially improve performance through boosting framework
@@ -253,7 +279,7 @@ While traditional statistical NB models use GLM framework, we can implement NB r
 - Allow for complex feature interactions
 - Implement through custom loss or approximate with Poisson boosting
 
-Preliminary Results:
+**Preliminary Results:**
 
 Boosted Negative Binomial achieved similar performance to standard NB and ZINB:
 - Comparable MAE and RMSE metrics
@@ -261,30 +287,30 @@ Boosted Negative Binomial achieved similar performance to standard NB and ZINB:
 - Slightly better at capturing non-linear patterns
 - Increased computational cost
 
-Trade-offs:
+**Trade-offs:**
 - Better flexibility in modeling complex relationships
 - Reduced interpretability compared to GLM
 - Longer training time
 - Risk of overfitting without careful tuning
 
-Conclusion: The boosting framework did not provide substantial gains over the well-tuned statistical NB model, suggesting our feature engineering was already capturing most relevant patterns.
+### Conclusion: The boosting framework did not provide substantial gains over the well-tuned statistical NB model, suggesting our feature engineering was already capturing most relevant patterns.
 ---
 
-# Model 4: Zero-Inflated Negative Binomial (ZINB)
+## Zero-Inflated Negative Binomial (ZINB)
 
-Why We Selected This Model:
+**Why We Selected This Model:**
 - Explicitly models the two-process data generation observed in our analysis
 - Addresses both overdispersion AND excess zeros
 - Theoretically aligned with bike-share behavior patterns
 - Standard approach in zero-heavy count data literature
 
-Theoretical Motivation:
+**Theoretical Motivation:**
 
 Bluebikes demand exhibits a clear dual-process structure:
 1. Some hours are structurally zero (station inactive or area dormant)
 2. When active, demand follows an overdispersed count process
 
-ZINB models this explicitly through two components:
+**ZINB models this explicitly through two components:**
 
 Component 1 - Zero Inflation Model (Logistic):
 - Predicts probability that an hour is a "structural zero"
@@ -380,9 +406,9 @@ The similar results suggest:
 
 ---
 
-## Performance Summary
+# Performance Summary
 
-# Best Performing Models (NB and ZINB)
+## Best Performing Models (NB and ZINB)
 
 Across all tested stations:
 - Average Absolute Error: ~3.3 bikes/hour
@@ -414,4 +440,3 @@ Performance by Station Type:
 - Zero predictions accurate within 2-4% of actual
 - Generalizes across seasons and station categories
 - Robust to special events and weather variations
-
