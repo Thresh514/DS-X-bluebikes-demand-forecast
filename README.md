@@ -1,4 +1,5 @@
 # Bluebikes Demand Forecasting
+# [Project Name]
 
 **Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen
 **Course:** CS 506
@@ -6,6 +7,15 @@
 **Website Link:** https://bluebikes-demand-forecast.vercel.app/
 
 ---
+
+## Project Description
+
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen 
+**Course:** CS506
+**Video Link:** [Insert link]
+
+## How to build and run
+
 
 ## Project Description
 
@@ -428,6 +438,206 @@ This dual-process structure aligns with bike-share behavior patterns and address
 ---
 
 ### Final Model Comparison
+
+- **Riders:** Can avoid empty or full stations before they arrive.  
+- **Planners:** Can identify problem stations and times and act earlier.
+
+### Repository Structure
+
+```
+project-root/
+   data/                   # [Description of data directory]
+      raw/               # [Raw data files]
+      processed/         # [Processed/cleaned data]
+   notebooks/             # [Jupyter notebooks for exploration and modeling]
+   src/                   # [Source code]
+      models/           # [Model implementations]
+      features/         # [Feature engineering scripts]
+      utils/            # [Utility functions]
+   pipeline/              # [Data processing pipeline]
+   tests/                 # [Unit tests]
+   results/               # [Model outputs and results]
+   visualizations/        # [Plots and charts]
+   README.md
+```
+
+[Add notes about key directories and their contents]
+
+## Data Processing and Modeling
+
+### Feature Engineering
+
+[Provide an overview of the feature engineering approach and philosophy]
+
+#### Temporal Features
+- **[Feature 1]**: [Description, e.g., Hour of day (0-23)]
+- **[Feature 2]**: [Description, e.g., Day of week]
+- **[Feature 3]**: [Description]
+- **[Feature 4]**: [Description]
+
+#### [Feature Category 2, e.g., Operational Features]
+- **[Feature 1]**: [Description]
+- **[Feature 2]**: [Description]
+- **[Feature 3]**: [Description]
+
+#### [Feature Category 3, e.g., Spatial Features]
+- **[Feature 1]**: [Description]
+- **[Feature 2]**: [Description]
+- **[Feature 3]**: [Description]
+
+#### [Additional Feature Categories]
+[Add more categories as needed]
+
+**Total Features:** [Number of features used across all models]
+
+## Model Development
+
+### Model 1: [Model Name, e.g., Baseline Linear Regression]
+
+#### Model Rationale
+[Explain why this model was chosen as the starting point or baseline]
+- [Reason 1, e.g., Natural choice for this type of data]
+- [Reason 2, e.g., Provides interpretable coefficients]
+- [Reason 3, e.g., Computationally efficient]
+
+#### Features Used
+[List the specific features used in this model]
+- [Feature 1]
+- [Feature 2]
+- [Feature 3]
+[Or note: "All features listed in Feature Engineering section"]
+
+#### Data Analysis and Visualization
+[Describe any exploratory data analysis or visualizations created for this model]
+
+**Visualizations Created:**
+- [Visualization 1, e.g., Distribution of target variable]
+- [Visualization 2, e.g., Correlation heatmap]
+- [Visualization 3, e.g., Feature importance plot]
+
+**Key Findings:**
+- [Finding 1]
+- [Finding 2]
+- [Finding 3]
+
+#### Code Description
+**Location:** `[path/to/notebook or script]`
+
+**Implementation:**
+```python
+# [Brief code snippet showing model implementation]
+```
+
+**Key Steps:**
+1. [Step 1, e.g., Data preprocessing and splitting]
+2. [Step 2, e.g., Feature scaling/transformation]
+3. [Step 3, e.g., Model training]
+4. [Step 4, e.g., Prediction and evaluation]
+
+#### Results
+**Performance Metrics:**
+- **[Metric 1, e.g., MAE]**: [Value]
+- **[Metric 2, e.g., RMSE]**: [Value]
+- **[Metric 3, e.g., R�]**: [Value]
+- **[Metric 4]**: [Value]
+
+**Strengths:**
+- [Strength 1]
+- [Strength 2]
+
+**Limitations:**
+- [Limitation 1]
+- [Limitation 2]
+- [Limitation 3]
+
+**Conclusion:** [Brief summary of what was learned from this model]
+
+---
+
+### Model 2: [Model Name]
+
+#### Model Rationale
+[Explain why this model was chosen and how it addresses limitations of previous models]
+- [Reason 1]
+- [Reason 2]
+- [Reason 3]
+
+#### Features Used
+[List features or note if same as previous model]
+
+#### Data Analysis and Visualization
+[Describe any additional analysis specific to this model]
+
+**Visualizations Created:**
+- [Visualization 1]
+- [Visualization 2]
+
+**Key Findings:**
+- [Finding 1]
+- [Finding 2]
+
+#### Code Description
+**Location:** `[path/to/notebook or script]`
+
+**Implementation:**
+```python
+# [Code snippet]
+```
+
+**Key Steps:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+#### Results
+**Performance Metrics:**
+- **[Metric 1]**: [Value]
+- **[Metric 2]**: [Value]
+- **[Metric 3]**: [Value]
+
+**Improvements Over Previous Model:**
+- [Improvement 1]
+- [Improvement 2]
+
+**Limitations:**
+- [Limitation 1]
+- [Limitation 2]
+
+**Conclusion:** [Summary]
+
+---
+
+### Model 3: [Model Name]
+
+#### Model Rationale
+[Why this model was chosen]
+
+#### Features Used
+[List features]
+
+#### Data Analysis and Visualization
+[Analysis specific to this model]
+
+#### Code Description
+**Location:** `[path]`
+
+**Implementation:**
+```python
+# [Code snippet]
+```
+
+#### Results
+**Performance Metrics:**
+[List metrics and values]
+
+**Analysis:**
+[Strengths, limitations, conclusions]
+
+### [Additional Models]
+
+[Repeat the same structure for each additional model]
+
+## Final Model Comparison
 
 | Model | Strength | Weakness | RMSE | MAE | R² | Use Case |
 |-------|----------|----------|------|-----|----|---------|
