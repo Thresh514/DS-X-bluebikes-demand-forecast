@@ -7,13 +7,15 @@ FLASK_APP := app
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install frontend-install build-frontend run-frontend run-backend process-data train-model clean
+.PHONY: help install frontend-install build-frontend run-frontend run-backend run-models run-poisson run-negbinom run-zinb clean
 
 help:
 	@echo "Available targets:"
 	@echo "  install          - Create a Python venv and install backend/model dependencies"
-	@echo "  process-data     - Run the feature-filling script (requires data/feature.csv and data/2024_data files)"
-	@echo "  train-model      - Train the XGBoost model (requires src/data/2023.csv)"
+	@echo "  run-models       - Run all three model notebooks (Poisson, Negative Binomial, ZINB)"
+	@echo "  run-poisson      - Run Poisson with features notebook"
+	@echo "  run-negbinom     - Run Negative Binomial with features notebook"
+	@echo "  run-zinb         - Run ZINB with features notebook"
 	@echo "  run-backend      - Start the Flask API (port 5000)"
 	@echo "  frontend-install - Install Next.js dependencies with npm ci"
 	@echo "  build-frontend   - Build the Next.js app"
@@ -28,14 +30,20 @@ $(VENV_DIR)/bin/activate: requirements.txt
 	$(PIP) install -r requirements.txt
 	@touch $(VENV_DIR)/bin/activate
 
-process-data: install
-	@test -f data/feature.csv || { echo "Missing data/feature.csv. Please place the raw features file before running."; exit 1; }
-	@test -f data/2024_data/station_features_2024.csv || { echo "Missing data/2024_data/station_features_2024.csv. Please add the station metadata."; exit 1; }
-	$(PYTHON_BIN) pipeline/fill_features.py
+run-models: run-poisson run-negbinom run-zinb
+	@echo "All models have been executed successfully!"
 
-train-model: install
-	@test -f src/data/2023.csv || { echo "Missing training data at src/data/2023.csv. Provide the dataset before training."; exit 1; }
-	$(PYTHON_BIN) pipeline/train_model.py
+run-poisson: install
+	@echo "Running Poisson with features model..."
+	$(PYTHON_BIN) -m jupyter nbconvert --to notebook --execute --inplace pipeline/poisson_with_features.ipynb
+
+run-negbinom: install
+	@echo "Running Negative Binomial with features model..."
+	$(PYTHON_BIN) -m jupyter nbconvert --to notebook --execute --inplace pipeline/neg_with_features.ipynb
+
+run-zinb: install
+	@echo "Running ZINB with features model..."
+	$(PYTHON_BIN) -m jupyter nbconvert --to notebook --execute --inplace pipeline/ZINB_with_feature.ipynb
 
 run-backend: install
 	cd flask && ../$(PYTHON_BIN) -m flask --app $(FLASK_APP) run --host=0.0.0.0 --port=5000
