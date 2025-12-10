@@ -1,8 +1,8 @@
 # Bluebikes Demand Forecasting
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen
-**Course:** CS 506
-**Video Link:**
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen </br>
+**Course:** CS 506 </br>
+**Video Link:** </br>
 **Website Link:** https://bluebikes-demand-forecast.vercel.app/
 
 ---
