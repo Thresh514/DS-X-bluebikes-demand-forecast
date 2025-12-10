@@ -1,11 +1,108 @@
 # Bluebikes Demand Forecasting
 
-**Team:** Matthew Yan • Jiayong Tu • Fenglin Hu • Mingyu Shen
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen
 **Course:** CS 506
 **Video Link:**
 **Website Link:** https://bluebikes-demand-forecast.vercel.app/
 
-## How to Build and Run
+---
+
+## Project Description
+
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen 
+**Course:** CS506
+**Video Link:** [Insert link]
+
+## How to build and run
+
+
+## Project Description
+
+This project predicts hourly station-level bike demand (inflow and outflow) using historical Bluebikes trip data. We developed a comprehensive data processing pipeline and advanced statistical modeling framework to address the unique challenges of bike-share demand forecasting.
+
+### Why It Matters
+
+Accurate bike demand forecasting provides significant value to multiple stakeholders:
+
+- **Riders:** Can avoid empty or full stations before they arrive, improving user experience and reducing trip planning uncertainty.
+- **Planners:** Can identify problem stations and time periods, enabling proactive rebalancing operations and infrastructure improvements.
+- **Operations:** Optimizes bike redistribution efforts, reducing operational costs and improving service reliability.
+
+The challenge lies in the unique characteristics of bike-share data: extreme variability between stations, excess structural zeros during off-peak hours, and overdispersion where variance far exceeds the mean. Traditional regression models fail to capture these patterns, motivating our advanced count-based modeling approach.
+
+---
+
+### Repository Structure
+
+```
+bluebikes-demand-forecast/
+├── pipeline/                          # Data processing and modeling notebooks
+│   ├── data_clean_and_feature.ipynb   # Feature engineering for Poisson & NB models
+│   ├── poisson_with_features.ipynb    # Poisson regression baseline model
+│   ├── neg_with_features.ipynb        # Negative Binomial regression model
+│   ├── nb_with_boosting.ipynb         # Negative Binomial with boosting model
+│   ├── ZINB_with_feature.ipynb        # Zero-Inflated Negative Binomial model
+│   └── archive/                       # Archived scripts and notebooks
+├── flask/                             # Backend API
+│   ├── app.py                         # Flask application serving predictions
+│   ├── simulate_model.py              # Model simulation for API
+│   ├── requirement.txt                # Flask dependencies
+│   ├── test.py                        # Testing scripts
+│   └── testagain.py                   # Additional testing scripts
+├── nextjs/                            # Frontend web application (Next.js)
+│   ├── app/                           # Next.js App Router
+│   │   ├── api/                       # API routes
+│   │   ├── map/                       # Map visualization page
+│   │   ├── visualizations/            # Visualizations page
+│   │   └── page.tsx                   # Home page
+│   ├── components/                    # React components
+│   │   ├── ui/                        # UI components (buttons, cards, etc.)
+│   │   ├── bike-map.tsx               # Interactive bike station map
+│   │   └── visualizations/            # Visualization components
+│   ├── lib/                           # Utility libraries
+│   │   ├── types.ts                   # TypeScript type definitions
+│   │   ├── target-stations.ts         # Station data
+│   │   └── visualizations-data.ts     # Visualization metadata
+│   ├── public/                        # Static assets
+│   │   ├── 01_data_exploration/       # Data exploration visualizations
+│   │   ├── 02_time_series/            # Time series visualizations
+│   │   ├── 03_poisson_model/          # Poisson model results
+│   │   ├── 04_nb_boosting_model/      # NB boosting model results
+│   │   └── 05_zinb_model/             # ZINB model results
+│   └── package.json                   # Node.js dependencies
+├── visualizations/                    # Root-level visualization outputs
+│   ├── 01_data_exploration/           # Data exploration charts
+│   │   ├── global_distribution.png
+│   │   └── station_distributions/     # Per-station distribution plots
+│   ├── 02_time_series/                # Time series analysis
+│   │   ├── mit_hour_of_day.png
+│   │   ├── mit_hourly_by_month.png
+│   │   └── monthly/                   # Monthly breakdown plots
+│   ├── 03_poisson_model/              # Poisson model evaluation
+│   ├── 04_nb_boosting_model/          # NB boosting model evaluation
+│   ├── 05_zinb_model/                 # ZINB model evaluation
+│   └── *.md                           # Documentation files
+├── data/                              # Data directory (not in repo, created by download_dataset.py)
+│   ├── 2024_data/                     # 2024 Bluebikes trip data (12 monthly CSV files)
+│   └── 2023_data/                     # 2023 training data
+│       ├── Bluebikes/                 # 2023 trip data (12 monthly CSV files)
+│       ├── Weather/                   # Weather data CSV files
+│       └── Features/                  # Station feature data (MBTA stops, etc.)
+├── .github/                           # GitHub configuration
+│   └── workflows/
+│       └── ci.yml                     # CI/CD workflow
+├── download_dataset.py                # Script to download data from Hugging Face
+├── Makefile                           # Build automation and commands
+├── requirements.txt                   # Python dependencies
+├── .gitignore                         # Git ignore rules
+└── README.md                          # This file
+```
+
+**Note:** The `data/` directory is not included in the repository. Use `make download-data` or run `download_dataset.py` to download and organize the dataset from Hugging Face.
+
+---
+
+### How to Build and Run
 
 **Prerequisites:**
 - Python 3.10+
@@ -47,26 +144,7 @@
    ```
    Removes virtual environments, caches, build artifacts, and Node modules.
 
-## Project Description
-
-This project predicts hourly station-level bike demand (inflow and outflow) using historical Bluebikes trip data. We developed a comprehensive data processing pipeline and advanced statistical modeling framework to address the unique challenges of bike-share demand forecasting.
-
-
-### Why It Matters
-
-Accurate bike demand forecasting provides significant value to multiple stakeholders:
-
-- **Riders:** Can avoid empty or full stations before they arrive, improving user experience and reducing trip planning uncertainty.
-- **Planners:** Can identify problem stations and time periods, enabling proactive rebalancing operations and infrastructure improvements.
-- **Operations:** Optimizes bike redistribution efforts, reducing operational costs and improving service reliability.
-
-The challenge lies in the unique characteristics of bike-share data: extreme variability between stations, excess structural zeros during off-peak hours, and overdispersion where variance far exceeds the mean. Traditional regression models fail to capture these patterns, motivating our advanced count-based modeling approach.
-
-### Repository Structure
-
-```
-
-```
+---
 
 ## Data Processing and Modeling
 
