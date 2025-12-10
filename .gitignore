@@ -39,5 +39,6 @@ next-env.d.ts
 venv
 /data/*.csv
 /data/2024_data/*.csv
+/data/2023_data/**/*.csv
 *.zip
 .venv/
