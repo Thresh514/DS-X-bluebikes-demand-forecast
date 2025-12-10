@@ -1,8 +1,17 @@
 # Bluebikes Demand Forecasting — Project Proposal
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen  
+**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen
 **Course:** CS 506 </br>
-**Video Link:** 
+**Video Link:**
+
+## How to build and run (reproducible steps)
+1. **Install prerequisites:** Python 3.10+, Node.js 18+, and `make` must be available on your PATH.
+2. **Install Python dependencies:** `make install` creates `.venv` and installs everything from `requirements.txt`.
+3. **Run the Flask API:** `make run-backend` (serves on http://localhost:5000 and uses the simulated model by default).
+4. **Run the Next.js frontend:** `make run-frontend` (installs Node deps via `npm ci`, then starts the dev server on http://localhost:3000).
+5. **Optional data processing:** `make process-data` fills engineered features using `pipeline/fill_features.py` and requires `data/feature.csv` plus `data/2024_data/station_features_2024.csv`.
+6. **Optional model training:** `make train-model` runs `pipeline/train_model.py` and requires a training CSV at `src/data/2023.csv`.
+7. **Clean everything:** `make clean` removes the virtual environment, caches, build artifacts, and Node modules.
 
 ---
 
