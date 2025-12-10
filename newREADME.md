@@ -9,15 +9,6 @@
 
 ## Project Description
 
-**Team:** Matthew Yan · Jiayong Tu · Fenglin Hu · Mingyu Shen 
-**Course:** CS506
-**Video Link:** [Insert link]
-
-## How to build and run
-
-
-## Project Description
-
 This project predicts hourly station-level bike demand (inflow and outflow) using historical Bluebikes trip data. We developed a comprehensive data processing pipeline and advanced statistical modeling framework to address the unique challenges of bike-share demand forecasting.
 
 ### Why It Matters
