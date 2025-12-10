@@ -25,6 +25,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -40,5 +41,6 @@ venv
 /data/*.csv
 /data/2024_data/*.csv
 /data/2023_data/**/*.csv
+pipeline/2023_data/
 *.zip
 .venv/
