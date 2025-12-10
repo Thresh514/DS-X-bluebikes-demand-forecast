@@ -40,3 +40,4 @@ venv
 /data/*.csv
 /data/2024_data/*.csv
 *.zip
+.venv/

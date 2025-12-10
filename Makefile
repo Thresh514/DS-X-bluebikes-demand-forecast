@@ -7,11 +7,12 @@ FLASK_APP := app
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install frontend-install build-frontend run-frontend run-backend run-models run-poisson run-negbinom run-zinb clean
+.PHONY: help install download-data frontend-install build-frontend run-frontend run-backend run-models run-poisson run-negbinom run-zinb clean
 
 help:
 	@echo "Available targets:"
 	@echo "  install          - Create a Python venv and install backend/model dependencies"
+	@echo "  download-data    - Download dataset from Hugging Face and organize by year"
 	@echo "  run-models       - Run all three model notebooks (Poisson, Negative Binomial, ZINB)"
 	@echo "  run-poisson      - Run Poisson with features notebook"
 	@echo "  run-negbinom     - Run Negative Binomial with features notebook"
@@ -29,6 +30,12 @@ $(VENV_DIR)/bin/activate: requirements.txt
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 	@touch $(VENV_DIR)/bin/activate
+
+download-data: install
+	@echo "Downloading dataset from Hugging Face..."
+	@echo "This may take a while (total size: ~1.85 GB)"
+	@echo ""
+	$(PYTHON_BIN) download_dataset.py
 
 run-models: run-poisson run-negbinom run-zinb
 	@echo "All models have been executed successfully!"
