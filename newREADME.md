@@ -141,39 +141,41 @@ bluebikes-demand-forecast/
 
 ### Feature Engineering
 
-We engineered a comprehensive set of features from raw trip data to capture temporal, spatial, and operational patterns. All features were standardized and scaled before model training.
+Across all models, we engineered a comprehensive set of features from raw trip data to capture temporal, spatial, and operational patterns. Not all features were used in each model training process.
 
 #### Temporal Features
+- `month` (1-12): Month of the year to capture seasonal patterns
 - `hour_of_day` (0-23): Hour when the observation period starts
 - `day_of_week` (0-6): Day of week (0=Monday, 6=Sunday)
-- `month` (1-12): Month of the year to capture seasonal patterns
 - `is_weekend` (0/1): Binary indicator for Saturday/Sunday
 - `start_hour`, `end_hour`: Hour boundaries of the observation window
 - `is_night` (0/1): Nighttime indicator (10pm-5am) for structural zero modeling
 
 #### Spatial Features (Station-Level)
 - `station_lat`, `station_lng`: Geographic coordinates
-- `dist_subway_m`: Distance to nearest subway/commuter rail station (meters)
-- `dist_bus_m`: Distance to nearest bus stop (meters)
-- `dist_university_m`: Distance to nearest university (meters)
-- `dist_business`: Distance to nearest business district
-- `dist_residential`: Distance to nearest residential area
+- `subway_distance_m`: Distance to nearest subway/commuter rail station (meters)
+- `bus_distance_m`: Distance to nearest bus stop (meters)
+- `university_distance_m`: Distance to nearest university (meters)
 - `mbta_stops_250m`: Count of MBTA stations within 250m radius
 - `bus_stops_250m`: Count of bus stops within 250m radius
-- `restaurant_count`, `restaurant_density`: Nearby amenities
+- `restaurant_count`: 
+- `restaurant_count`: Count of nearby restaurants (within the station buffer)
+- `dist_business`: Distance to nearest commercial/business district (meters)
+- `dist_residential`: Distance to nearest residential-area centroid (meters)
+- `pop_density`: Local population density (people per sq. km) around the station
+- `emp_density`: Local employment density (jobs per sq. km) around the station
+- `restaurant_density`: Number of restaurants per sq. km (local restaurant concentration)
 
 #### Lag Features (Time-Series)
 - `last_hour_in`, `last_hour_out`: Previous hour's inflow/outflow
-- `last_two_hour_in`, `last_two_hour_out`: 2-hour lag
-- `last_three_hour_in`, `last_three_hour_out`: 3-hour lag
+- `last_two_hour_in`, `last_two_hour_out`: 2-hour lag inflow/outflow
+- `last_three_hour_in`, `last_three_hour_out`: 3-hour lag inflow/outflow
 
 These capture short-term momentum and autocorrelation in demand.
 
 #### Weather Features
 - `avg_temp`: Average temperature (�F)
 - `precipitation`: Precipitation amount (inches)
-
-Weather significantly impacts ridership, especially during adverse conditions.
 
 ### Model Development
 
@@ -488,12 +490,20 @@ y_test_pred  = y_test_pred  + boost.predict(X_test_imp)
 
 ### Model Rationale
 
-ZINB explicitly models the two-process data generation observed in bike-share systems:
+Examining our data overall, we noticed that a large percentage of in and out values were 0.
 
-1. **Process 1 (Zero-Inflation):** Some hours are structurally zero (station inactive, area dormant)
-   - Examples: 2-4 AM at suburban stations, weekday afternoons at business districts
+![Global distribution of hourly inflow/outflow counts](visualizations/01_data_exploration/global_distribution.png)
 
-2. **Process 2 (Count Model):** When active, demand follows an overdispersed count distribution
+This is likely due to the nature of bike-share systems, in which some hours are structurally zero.
+
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output1.png)
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output3.png)
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output4.png)
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output5.png)
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output6.png)
+![Distribution of rush hour inflow/outflow counts](visualizations/01_data_exploration/station_rush_hour_distributions/output7.png)
+
+ZINB explicitly models this two-process data generation.
 
 **Theoretical Motivation:**
 
@@ -509,27 +519,25 @@ This dual-process structure aligns with bike-share behavior patterns and address
 
 ### Features Used
 
-**Extended feature set (18 features total):**
-
-**Count Model Features (NB component, predicts �):**
-- `month`, `start_hour`, `end_hour`
+**Feature set (6 features total):**
+- `month`
+- `start_hour`
+- `end_hour`
 - `bus_distance_m`
-- `last_three_hour_in`, `last_three_hour_out`
+- `last_three_hour_in`
+- `last_three_hour_out`
 
-**Inflation Model Features (predicts �):**
+More features were used originally, but a count model coefficient analysis showed that the above features were the most impactful.
+
+**Inflation Model Features (predicts the liklihood of a structural zero):**
 - `is_night` (strong predictor of structural zeros)
 - `precipitation` (weather-driven inactivity)
 - `avg_temp` (temperature effects on ridership)
 
-**Additional features for context:**
-- All temporal, spatial, and lag features from previous models
-- Weather features: `avg_temp`, `precipitation`
-- Enhanced spatial features: `university_distance_m`, `subway_distance_m`, `bus_distance_m`, `mbta_stops_250m`, `bus_stops_250m`
-
-### Data Analysis
+<!-- ### Data Analysis
 
 **Comprehensive data enrichment pipeline:**
-1. Identified top 20 busiest stations by total activity
+1. Identified 20 busiest stations by total activity
 2. Calculated distances to nearest subway, bus, and university
 3. Counted transit stops within 250m radius
 4. Merged hourly weather data (temperature, precipitation)
@@ -542,30 +550,30 @@ This dual-process structure aligns with bike-share behavior patterns and address
 - Distribution of zero-inflation probability (�)
 - Distribution of NB mean (�)
 - Coefficient comparison across features
-- Zero proportion comparisons (actual vs. predicted)
+- Zero proportion comparisons (actual vs. predicted) -->
 
 ### Code Description
 
 **Implementation:** `pipeline/ZINB_with_feature.ipynb`
 
-1. **Data Extraction:**
-   - Load 2023 trip data (Apr-Dec) from multiple CSVs
-   - Parse mixed timestamp formats
+1. **Data Extraction and analysis:**
+   - Load and parse 2023 trip data (Apr-Dec) from multiple CSVs
+      - January-March data were skipped due to formatting issues
    - Aggregate to hourly station-level IN/OUT counts
-   - Create complete time grid (every station � every hour)
+   - Create complete time grid (every station × every hour)
+   - Conduct data analysis on the distribution of IN/OUT counts
 
-2. **Feature Engineering:**
-   - Calculate distances to nearest transit using Haversine formula
-   - Count nearby amenities within radius
-   - Merge weather data by date
+3. **Feature Engineering:**
    - Add lag features (1hr, 2hr, 3hr)
+   - Calculate distances to nearest university and MBTA subway and bus station
+   - Merge weather data by date
    - Add nighttime indicator
 
-3. **Model Training:**
+4. **Model Training:**
    ```python
    from statsmodels.discrete.count_model import ZeroInflatedNegativeBinomialP
 
-   # Separate models for OUT and IN
+   # Separate models for OUT and IN (Example only shows OUT)
    zinb_out_model = ZeroInflatedNegativeBinomialP(
        endog=y_out_train,
        exog=X_train_const,      # Count model features
@@ -574,14 +582,24 @@ This dual-process structure aligns with bike-share behavior patterns and address
    )
 
    zinb_out_results = zinb_out_model.fit(method='bfgs', maxiter=1000)
-   ```
 
-4. **Prediction Rule:**
-   ```python
-   # If � > 0.5, predict 0; otherwise use NB mean
+   # Collect Model Predictions for expected value at hour-station
+   y_out_pred_original = zinb_out_results.predict(exog=X_test_const, exog_infl=X_test_infl, which='mean')
+
+   # Collect Model Predictions for probability of a structural zero at hour-station
+   pi_out_pred = zinb_out_results.predict(exog=X_test_const, exog_infl=X_test_infl, which='prob-zero')
+
+   # Collect Model Predictions for expected value at hour-station given non-structural zero
+   mu_out_pred = zinb_out_results.predict(exog=X_test_const, exog_infl=X_test_infl, which='mean-main')
+
+   # If  > 0.5, predict 0; otherwise use NB mean
    y_pred = np.where(pi_pred > 0.5, 0, y_pred_original)
    ```
 
+5. **Results analysis**
+- Computes standard evaluation metrics (MAE, RMSE, R²)
+- Produces diagnostic visualizations and tables: predicted vs actual scatter plots, residual plots, zero-proportion comparisons, coefficient tables for the count and inflation components, and distributions of `mu` and `pi` for model inspection and reporting.
+   
 ### Results
 
 #### OUT Model Performance
@@ -590,52 +608,14 @@ This dual-process structure aligns with bike-share behavior patterns and address
 |--------|-------|
 | RMSE | 5.2343 |
 | MAE | 3.2862 |
-| R� | 0.1983 |
-| Mean � | 0.2574 |
-| Mean � | 3.8-4.2 |
-| Dispersion � | 5.2905 |
-| Actual Zero Proportion | 0.2796 |
-| Predicted Zero Proportion | 0.2376 |
+
 
 #### IN Model Performance
 
 | Metric | Value |
 |--------|-------|
-| Overall Accuracy | 21.58% |
-| RMSE | ~5.2 |
-| MAE | ~3.3 |
-| R� | ~0.20 |
-
-**Key Insights:**
-
-1. **Zero-Inflation Effectiveness:** � successfully identifies structural zeros (~26% of hours)
-2. **Nighttime Patterns:** `is_night` is highly significant in inflation model (p < 0.001)
-3. **Weather Impact:** Precipitation increases � (more zeros during rain)
-4. **Lag Features:** `last_three_hour_in/out` strong predictors of current demand
-5. **Balanced Predictions:** Predicted zero proportion (23.76%) close to actual (27.96%)
-
-**Feature Importance (Count Model):**
-- `start_hour`: Strongest predictor (commute peaks)
-- `last_three_hour_out`: Captures momentum
-- `bus_distance_m`: Negative coefficient (closer to transit = more demand)
-- `month`: Seasonal variation (summer > winter)
-
-### Final Model Comparison
-
-| Model | Strength | Weakness | RMSE | MAE | R� | Use Case |
-|-------|----------|----------|------|-----|----|---------|
-| **Poisson** | Fast, interpretable, simple | Fails with overdispersion, underestimates peaks | 5.024 | 3.229 | Low | Quick baseline only |
-| **Negative Binomial** | Handles overdispersion, excellent performance | Doesn't explicitly model structural zeros | 5.076 | 3.293 | 0.215 | **Primary recommendation** |
-| **ZINB** | Explicitly models zero-inflation, interpretable two-process | Marginally higher RMSE, more complex | 5.234 | 3.286 | 0.198 | Stations with clear inactive periods |
-
-**Why NB and ZINB Perform Similarly:**
-
-1. **Feature Engineering Success:** Our temporal and lag features already capture much of the zero-inflation pattern implicitly
-2. **Conditional Zeros:** Many zeros are conditional on features (hour, weather) rather than purely structural
-3. **Strong Lag Signals:** `last_hour_in/out` effectively predicts when station will be inactive
-4. **Trade-off:** ZINB's additional complexity (2 sub-models) doesn't justify marginal improvements for this dataset
-
-**Recommendation:** Use **Negative Binomial** as the primary model for its excellent balance of performance, interpretability, and simplicity. Use **ZINB** for specific stations with clear inactive periods (e.g., university stations during breaks).
+| RMSE | 5.0750 |
+| MAE | 3.2928 |
 
 ## Final Results
 
