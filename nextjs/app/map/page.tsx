@@ -108,6 +108,7 @@ export default function MapPage() {
         prediction_minutes: minutes,
         longitude: station.lon,
         latitude: station.lat,
+        station_name: station.name, // Add station name for feature lookup
       }));
 
       // 4. batch call prediction API
@@ -117,7 +118,20 @@ export default function MapPage() {
         body: JSON.stringify(predictionRequests),
       });
 
+      if (!predictRes.ok) {
+        const errorData = await predictRes.json().catch(() => ({
+          error: `HTTP ${predictRes.status}: ${predictRes.statusText}`
+        }));
+        console.error("Prediction API error:", errorData);
+        throw new Error(errorData.error || "Prediction failed");
+      }
+
       const predictData = await predictRes.json();
+
+      if (!predictData.predictions || !Array.isArray(predictData.predictions)) {
+        console.error("Invalid prediction response:", predictData);
+        throw new Error("Invalid prediction response format");
+      }
 
       // 5. merge prediction results into station data, and calculate predicted bike numbers
       const updatedStations = stationsData.map((station, index) => {

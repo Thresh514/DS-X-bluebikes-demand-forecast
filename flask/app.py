@@ -1,72 +1,60 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from flask_cors import CORS
-# Use simulated model instead of real model (comment out if real model is available)
-from simulate_model import BikeShareSimulator
-model = BikeShareSimulator()
-# from test import model  # Uncomment when real model file is available
+from simple_predictor import SimpleBikePredictor
+
+print("=" * 60)
+print("Using Simple Common Sense Predictor")
+print("(Real model has numerical overflow issues)")
+print("=" * 60)
+
+model = SimpleBikePredictor()
+print("✓ Predictor ready")
+print("=" * 60)
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/")
 def home():
-    return {"status": "Flask backend running"}
+    return {
+        "status": "Flask backend running",
+        "model": "Simple Common Sense Predictor",
+        "version": "3.0"
+    }
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    """
-    predict bike arrivals and departures
-    
-    expected JSON format:
-    single station:
-    {
-        "temperature": 20,          // temperature
-        "rainfall": 0,              // rainfall
-        "hour_of_week": 48,         // hour_of_week
-        "isWeekend": 0,             // isWeekend (0 or 1)
-        "month": 6,                 // month (1-12)
-        "prediction_minutes": 30,   // prediction_minutes (0-60)
-        "longitude": -71.0589,      // longitude
-        "latitude": 42.3601         // latitude
-    }
-    
-    multiple stations (array):
-    [
-        {...},  // station 1
-        {...}   // station 2
-    ]
-    
-    return format:
-    {
-        "predictions": [
-            {"arrivals": 10, "departures": 8},  // arrivals
-            {"arrivals": 15, "departures": 12}  // departures
-        ]
-    }
-    """
     try:
         data = request.get_json()
-        
-        if isinstance(data, dict):
-            df = pd.DataFrame([data])
-        else:
-            df = pd.DataFrame(data)
+        if not data:
+            return jsonify({"error": "No data"}), 400
 
-        result = model.predict(df)
+        # Predict
+        result = model.predict(data if isinstance(data, list) else [data])
+
+        # Format
         predictions = []
-
         for i in range(len(result['arrivals'])):
             predictions.append({
                 'arrivals': int(result['arrivals'][i]),
                 'departures': int(result['departures'][i])
             })
-        
+
         return jsonify({
-            "predictions": predictions
+            "predictions": predictions,
+            "model_type": "Simple Predictor",
+            "num_stations": len(predictions)
         })
+
     except Exception as e:
+        import traceback
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
+
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "healthy"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
