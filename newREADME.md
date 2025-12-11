@@ -347,25 +347,52 @@ This captures the extra variability observed during:
 ### Features Used(Same as Poisson Attemp)
 
 **Feature Set (12 features):**
-```
-station_features = station_features[[
-    "station_name",
-    "station_lat",
-    "station_lng",
-    "dist_subway_m",
-    "dist_bus_m",
-    "dist_university_m",
-    "dist_business",
-    "dist_residential",
-    "pop_density",
-    "emp_density",
-    "restaurant_count",
-    "restaurant_density",
-]]
-```
+   ```
+   station_features = station_features[[
+      "station_name",
+      "station_lat",
+      "station_lng",
+      "dist_subway_m",
+      "dist_bus_m",
+      "dist_university_m",
+      "dist_business",
+      "dist_residential",
+      "pop_density",
+      "emp_density",
+      "restaurant_count",
+      "restaurant_density",
+   ]]
+   ```
 (Feature engineering: check `pipeline/feature_enigneering.ipynb`)
 
 ### Code Description
+
+1. **Data Loading:** 
+   - Load 2024 and 2023 trip data and station feature CSV
+   - Deicide to use more stations as trainning set 
+   - Selected staion list:
+      ```
+         "MIT at Mass Ave / Amherst St",
+         "Central Square at Mass Ave / Essex St",
+         "Harvard Square at Mass Ave/ Dunster",
+         "Ames St at Main St",
+         "MIT Pacific St at Purrington St",
+         "Charles Circle - Charles St at Cambridge St",
+         "MIT Vassar St",
+         "Beacon St at Massachusetts Ave",
+         "Christian Science Plaza - Massachusetts Ave at...",
+         "Boylston St at Massachusetts Ave",
+         "Boylston St at Fairfield St",
+         "South Station - 700 Atlantic Ave",
+         "Forsyth St at Huntington Ave",
+         "Mass Ave at Albany St",
+         "Commonwealth Ave at Agganis Way",
+         "Central Sq Post Office / Cambridge City Hall a...",
+         "Newbury St at Hereford St",
+         "Harvard University River Houses at DeWolfe St ...",
+         "MIT Stata Center at Vassar St / Main St",
+         "Landmark Center - Brookline Ave at Park Dr"
+      ```
 
 **Feature Engineering:** Uses the same feature dataset from `pipeline/feature_enigneering.ipynb` as Poisson.
 
