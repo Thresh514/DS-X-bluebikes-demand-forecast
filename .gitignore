@@ -44,5 +44,3 @@ venv
 pipeline/2023_data/
 *.zip
 .venv/
-
-*.pkl

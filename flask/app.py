@@ -1,15 +1,25 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from flask_cors import CORS
-from simple_predictor import SimpleBikePredictor
 
 print("=" * 60)
-print("Using Simple Common Sense Predictor")
-print("(Real model has numerical overflow issues)")
+print("Using ZINB (Zero-Inflated Negative Binomial) Model")
 print("=" * 60)
 
-model = SimpleBikePredictor()
-print("✓ Predictor ready")
+# 尝试加载 ZINB 模型，如果失败则回退到简单预测器
+try:
+    from zinb_predictor import ZINBPredictor
+    model = ZINBPredictor('zinb_models.pkl')
+    print("✓ ZINB Predictor ready")
+    model_type_class = ZINBPredictor
+except Exception as e:
+    print(f"✗ Error loading ZINB model: {e}")
+    print("Falling back to Simple Predictor...")
+    from simple_predictor import SimpleBikePredictor
+    model = SimpleBikePredictor()
+    model_type_class = SimpleBikePredictor
+    print("✓ Simple Predictor ready (fallback)")
+
 print("=" * 60)
 
 app = Flask(__name__)
@@ -17,10 +27,11 @@ CORS(app)
 
 @app.route("/")
 def home():
+    model_type = "ZINB Model" if model_type_class.__name__ == "ZINBPredictor" else "Simple Predictor (fallback)"
     return {
         "status": "Flask backend running",
-        "model": "Simple Common Sense Predictor",
-        "version": "3.0"
+        "model": model_type,
+        "version": "4.0"
     }
 
 @app.route("/predict", methods=["POST"])
@@ -41,9 +52,10 @@ def predict():
                 'departures': int(result['departures'][i])
             })
 
+        model_type = "ZINB Model" if model_type_class.__name__ == "ZINBPredictor" else "Simple Predictor"
         return jsonify({
             "predictions": predictions,
-            "model_type": "Simple Predictor",
+            "model_type": model_type,
             "num_stations": len(predictions)
         })
 
