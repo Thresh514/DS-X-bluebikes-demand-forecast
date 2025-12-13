@@ -6,7 +6,9 @@
       "Bash(../.venv/bin/python:*)",
       "Bash(grep:*)",
       "Bash(chmod:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(gunicorn --version:*)",
+      "Bash(gunicorn:*)"
     ]
   }
 }
