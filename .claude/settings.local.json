@@ -5,7 +5,8 @@
       "Bash(.venv/bin/python:*)",
       "Bash(../.venv/bin/python:*)",
       "Bash(grep:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }

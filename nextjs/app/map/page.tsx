@@ -120,7 +120,7 @@ export default function MapPage() {
 
       if (!predictRes.ok) {
         const errorData = await predictRes.json().catch(() => ({
-          error: `HTTP ${predictRes.status}: ${predictRes.statusText}`
+          error: `HTTP ${predictRes.status}: ${predictRes.statusText}`,
         }));
         console.error("Prediction API error:", errorData);
         throw new Error(errorData.error || "Prediction failed");
@@ -176,6 +176,7 @@ export default function MapPage() {
     }, 60000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
